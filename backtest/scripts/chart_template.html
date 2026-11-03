@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stock Backtest</title>
+<meta name="theme-color" content="#FAF9F5">
+<style>__CSS__</style>
+<style>
+  .layout { display:grid; min-height:100vh; }
+  .layout > * { min-width:0; }
+  aside { background:var(--surface); padding:var(--space-4) 0 var(--space-5); }
+  aside > header { display:flex; justify-content:space-between; align-items:center; gap:var(--space-2); padding:0 var(--space-2) 0 var(--space-4); }
+  aside > header > div { display:flex; align-items:center; }
+  aside > small { display:block; margin:var(--space-5) var(--space-4) var(--space-2); }
+  aside .field { width:calc(100% - var(--space-6)); margin:0 var(--space-4) var(--space-4); }
+  .status-bar { display:flex; align-items:center; gap:var(--space-2); margin:var(--space-2) var(--space-4) var(--space-4); }
+  .status-bar .status-dot { color:var(--positive); }
+
+  #symbol-list { display:block; }
+  #symbol-list .row { display:grid; grid-template-columns:64px 1fr 88px; column-gap:var(--space-3); align-items:center; width:calc(100% - var(--space-4)); }
+  #symbol-list .sparkline { justify-self:center; }
+  #symbol-list .row > :last-child { text-align:right; }
+  #symbol-list .row > :last-child small { display:block; }
+
+  #overlay-list .row { display:grid; grid-template-columns:16px 16px 1fr; column-gap:var(--space-3); align-items:center; cursor:pointer; }
+  #overlay-list input { margin:0; width:16px; height:16px; accent-color:var(--accent); }
+  #overlay-list .swatch { width:16px; height:2px; border-radius:1px; background:currentColor; }
+  #overlay-list .swatch.dashed { background:repeating-linear-gradient(90deg, currentColor 0 4px, transparent 4px 7px); }
+  #overlay-list .row:has(input:focus-visible) { outline:2px solid var(--accent); outline-offset:-2px; }
+  #overlay-list .row:hover { background:var(--fill); }
+
+  main { padding:var(--space-6); max-width:880px; width:100%; justify-self:center; }
+  .detail-header { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:var(--space-2) var(--space-6);
+    padding-bottom:var(--space-5); margin-bottom:var(--space-4); border-bottom:1px solid var(--separator); }
+  .symbol-header { display:flex; flex-wrap:wrap; align-items:baseline; column-gap:var(--space-3); }
+  .result-row { display:flex; gap:var(--space-6); }
+  .result-row > div { display:grid; grid-template-columns:auto; justify-content:start; }
+  .detail-header > small { flex-basis:100%; text-align:right; }
+  #readout { min-height:var(--space-6); margin-bottom:var(--space-2); }
+  #chart { height:640px; width:100%; }
+  .note { margin-top:var(--space-4); }
+
+  .panel-enter { animation:panel-enter 160ms ease-out; } @keyframes panel-enter { from { opacity:0; transform:translateY(4px); } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation:none !important; transition:none !important; } }
+
+  @media (min-width:900px) {
+    .layout { grid-template-columns:300px 1fr; }
+    aside { position:sticky; top:0; height:100vh; overflow-y:auto; border-right:1px solid var(--separator); }
+  }
+  @media (max-width:899px) {
+    main { padding:var(--space-5) var(--space-4); }
+    #symbol-list { display:flex; gap:var(--space-2); overflow-x:auto; padding:0 var(--space-4); }
+    #symbol-list .row { flex:none; grid-template-columns:auto auto auto; margin:0; border:1px solid var(--separator); }
+    .detail-header > small { text-align:left; }
+    #chart { height:520px; }
+  }
+</style>
+</head>
+<body>
+__ICONS__
+<div class="layout">
+  <aside>
+    <header><h2>Stock Backtest <small id="app-version"></small></h2>
+      <div><button class="icon-button" id="theme-button" aria-label="Switch theme"><svg class="icon" aria-hidden="true"><use href="#icon-theme"/></svg></button></div></header>
+    <div class="status-bar" role="status"><span class="status-dot"></span><small id="status-text"></small></div>
+
+    <small id="symbols-heading">Symbols</small>
+    <ul id="symbol-list"></ul>
+
+    <small id="interval-heading">Interval</small>
+    <span class="field"><select id="interval-select" aria-labelledby="interval-heading"></select><svg class="icon" aria-hidden="true"><use href="#icon-chevron"/></svg></span>
+
+    <small id="range-heading">Range</small>
+    <span class="field"><select id="range-select" aria-labelledby="range-heading"></select><svg class="icon" aria-hidden="true"><use href="#icon-chevron"/></svg></span>
+
+    <small id="overlay-heading">Overlays</small>
+    <ul id="overlay-list"></ul>
+  </aside>
+
+  <main id="panel" class="panel-enter">
+    <header class="detail-header">
+      <div class="symbol-header"><h1 id="symbol-name"></h1><small id="symbol-meta"></small></div>
+      <div class="result-row">
+        <div><small>Last close</small><h1 id="last-price"></h1></div>
+        <div><small>Change in range</small><h1 id="range-change"></h1></div>
+      </div>
+      <small id="range-note"></small>
+    </header>
+    <p id="readout"><small></small></p>
+    <div id="chart"></div>
+    <small class="note">Split-adjusted prices, not dividend-adjusted. Regular trading hours, New York time. Yahoo Finance data. Research only, not investment advice.</small>
+  </main>
+</div>
+<script>__LIB__</script>
+<script>
+const DATA = __DATA__;
+const VERSION = "__VERSION__";
+const INTERVAL_LIST = [
+  { key:"1m", label:"1 minute", ranges:["1D", "1W"] },
+  { key:"1h", label:"1 hour", ranges:["1D", "1W", "1M", "3M", "YTD", "1Y"] },
+  { key:"1d", label:"1 day", ranges:["1W", "1M", "3M", "YTD", "1Y", "5Y", "ALL"] },
+];
+const OVERLAY_LIST = [
+  { key:"sma20", label:"SMA 20", kind:"sma", color:"caution", panel:0 },
+  { key:"sma50", label:"SMA 50", kind:"sma", color:"accent", panel:0, on:true },
+  { key:"sma200", label:"SMA 200", kind:"sma", color:"text", panel:0, on:true },
+  { key:"ema12", label:"EMA 12", kind:"ema", color:"caution", panel:0 },
+  { key:"ema26", label:"EMA 26", kind:"ema", color:"accent", panel:0 },
+  { key:"macd", label:"MACD and signal", kind:"macd", color:"text", panel:1, on:true },
+  { key:"adx", label:"ADX, +DI and -DI", kind:"adx", color:"text", panel:2, on:true },
+];
+const PANE_HEIGHT = [380, 130, 130];
+const DAY = 86400;
+const priceFormat = new Intl.NumberFormat("en-US", { minimumFractionDigits:2, maximumFractionDigits:2 });
+const signed = value => `${value >= 0 ? "+" : "−"}${Math.abs(value).toFixed(2)}%`;
+const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const colorOf = name => cssVar(name === "text" ? "--text" : `--${name}`);
+
+const symbolList = document.getElementById("symbol-list");
+const intervalSelect = document.getElementById("interval-select");
+const rangeSelect = document.getElementById("range-select");
+const overlayList = document.getElementById("overlay-list");
+const chartBox = document.getElementById("chart");
+const SYMBOLS = Object.keys(DATA);
+const state = { symbol:null, interval:"1d", range:"1Y", overlay:Object.fromEntries(OVERLAY_LIST.map(o => [o.key, !!o.on])) };
+const intervalInfo = key => INTERVAL_LIST.find(i => i.key === key);
+
+// Daily bars carry "YYYY-MM-DD" strings; intraday bars carry Unix seconds. Intraday times are
+// New York wall-clock values stored as if they were UTC, so the axis shows exchange time.
+const toSeconds = time => typeof time === "number" ? time : Date.parse(time + "T00:00:00Z") / 1000;
+function formatTime(time) {
+  return typeof time === "number" ? new Date(time * 1000).toISOString().slice(0, 16).replace("T", " ") : time;
+}
+function rangeStart(key, lastSeconds) {
+  const last = new Date(lastSeconds * 1000);
+  if (key === "1D") return Date.UTC(last.getUTCFullYear(), last.getUTCMonth(), last.getUTCDate()) / 1000;
+  if (key === "YTD") return Date.UTC(last.getUTCFullYear(), 0, 1) / 1000;
+  const days = { "1W":7, "1M":30, "3M":91, "1Y":365, "5Y":1826 }[key];
+  return days ? lastSeconds - days * DAY : -Infinity;
+}
+
+const chart = LightweightCharts.createChart(chartBox, {
+  autoSize:true,
+  layout:{ background:{ color:"transparent" }, textColor:colorOf("text-secondary"), fontSize:12,
+    fontFamily:"-apple-system, BlinkMacSystemFont, system-ui, sans-serif", panes:{ separatorColor:colorOf("separator") } },
+  grid:{ vertLines:{ visible:false }, horzLines:{ color:colorOf("separator") } },
+  rightPriceScale:{ borderVisible:false }, timeScale:{ borderVisible:false },
+  crosshair:{ mode:LightweightCharts.CrosshairMode.Normal },
+});
+const candleSeries = chart.addSeries(LightweightCharts.CandlestickSeries, { borderVisible:false }, 0);
+const volumeSeries = chart.addSeries(LightweightCharts.HistogramSeries, { priceFormat:{ type:"volume" }, priceScaleId:"vol", lastValueVisible:false, priceLineVisible:false }, 0);
+chart.priceScale("vol").applyOptions({ scaleMargins:{ top:0.85, bottom:0 } });
+const lineSeries = {};
+OVERLAY_LIST.forEach(o => {
+  if (o.kind === "macd" || o.kind === "adx") return;
+  lineSeries[o.key] = chart.addSeries(LightweightCharts.LineSeries, { lineWidth:1.5, priceLineVisible:false, lastValueVisible:false }, o.panel);
+});
+const macdHist = chart.addSeries(LightweightCharts.HistogramSeries, { priceLineVisible:false, lastValueVisible:false }, 1);
+const macdLine = chart.addSeries(LightweightCharts.LineSeries, { lineWidth:1.5, priceLineVisible:false, lastValueVisible:false }, 1);
+const macdSignal = chart.addSeries(LightweightCharts.LineSeries, { lineWidth:1.5, priceLineVisible:false, lastValueVisible:false }, 1);
+const adxLine = chart.addSeries(LightweightCharts.LineSeries, { lineWidth:2, priceLineVisible:false, lastValueVisible:false, title:"ADX" }, 2);
+const plusDi = chart.addSeries(LightweightCharts.LineSeries, { lineWidth:1, priceLineVisible:false, lastValueVisible:false, title:"+DI" }, 2);
+const minusDi = chart.addSeries(LightweightCharts.LineSeries, { lineWidth:1, priceLineVisible:false, lastValueVisible:false, title:"-DI" }, 2);
+adxLine.createPriceLine({ price:25, lineWidth:1, lineStyle:2, axisLabelVisible:false, color:colorOf("text-secondary") });
+
+function layoutPanes() {
+  const panes = chart.panes();
+  PANE_HEIGHT.forEach((height, index) => panes[index] && panes[index].setHeight(height));
+}
+new ResizeObserver(() => requestAnimationFrame(layoutPanes)).observe(chartBox);
+
+function applyChartTheme() {
+  chart.applyOptions({
+    layout:{ textColor:colorOf("text-secondary"), panes:{ separatorColor:colorOf("separator") } },
+    grid:{ horzLines:{ color:colorOf("separator") } },
+  });
+  candleSeries.applyOptions({ upColor:colorOf("positive"), downColor:colorOf("negative"), wickUpColor:colorOf("positive"), wickDownColor:colorOf("negative") });
+  volumeSeries.applyOptions({ color:colorOf("separator") });
+  OVERLAY_LIST.forEach(o => {
+    const color = colorOf(o.color);
+    if (lineSeries[o.key]) lineSeries[o.key].applyOptions({ color, lineStyle: o.kind === "ema" ? LightweightCharts.LineStyle.Dashed : LightweightCharts.LineStyle.Solid });
+  });
+  macdLine.applyOptions({ color:colorOf("text") });
+  macdSignal.applyOptions({ color:colorOf("accent") });
+  adxLine.applyOptions({ color:colorOf("text") });
+  plusDi.applyOptions({ color:colorOf("positive") });
+  minusDi.applyOptions({ color:colorOf("negative") });
+}
+
+function setOverlayVisibility() {
+  OVERLAY_LIST.forEach(o => {
+    const visible = state.overlay[o.key];
+    if (lineSeries[o.key]) lineSeries[o.key].applyOptions({ visible });
+    if (o.kind === "macd") [macdHist, macdLine, macdSignal].forEach(s => s.applyOptions({ visible }));
+    if (o.kind === "adx") [adxLine, plusDi, minusDi].forEach(s => s.applyOptions({ visible }));
+  });
+}
+
+function renderSymbolList() {
+  symbolList.innerHTML = SYMBOLS.map(symbol => {
+    const daily = DATA[symbol]["1d"].candles, last = daily[daily.length - 1], prev = daily[daily.length - 2];
+    const change = (last.close / prev.close - 1) * 100;
+    return `<li><button class="row" data-symbol="${symbol}" aria-current="${symbol === state.symbol}">
+      <strong>${symbol}</strong>${sparkline(DATA[symbol].spark)}
+      <span><strong>$${priceFormat.format(last.close)}</strong><small class="${change >= 0 ? "positive" : "negative"}">${signed(change)}</small></span>
+    </button></li>`;
+  }).join("");
+  symbolList.querySelectorAll("button").forEach(button => button.onclick = () => selectSymbol(button.dataset.symbol));
+}
+
+function sparkline(values) {
+  const lowest = Math.min(...values), range = (Math.max(...values) - lowest) || 1;
+  const points = values.map((v, i) => `${(i / (values.length - 1) * 64).toFixed(1)},${(18 - (v - lowest) / range * 16).toFixed(1)}`).join(" ");
+  const color = values[values.length - 1] >= values[0] ? "var(--positive)" : "var(--negative)";
+  return `<svg class="sparkline" viewBox="0 0 64 20" width="64" height="20" aria-hidden="true"><polyline points="${points}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+}
+
+function renderOverlayList() {
+  overlayList.innerHTML = OVERLAY_LIST.map(o => `<li><label class="row">
+      <input type="checkbox" data-key="${o.key}" ${state.overlay[o.key] ? "checked" : ""}>
+      <span class="swatch ${o.kind === "ema" ? "dashed" : ""}" style="color:var(--${o.color === "text" ? "text" : o.color})"></span>
+      <span>${o.label}</span></label></li>`).join("");
+  overlayList.querySelectorAll("input").forEach(input => input.onchange = () => {
+    state.overlay[input.dataset.key] = input.checked;
+    setOverlayVisibility();
+  });
+}
+
+function renderIntervalOptions() {
+  intervalSelect.innerHTML = INTERVAL_LIST.map(i => `<option value="${i.key}">${i.label}</option>`).join("");
+  intervalSelect.value = state.interval;
+  intervalSelect.onchange = () => changeInterval(intervalSelect.value);
+}
+
+// Only the ranges that fit the interval's history are offered, as on Robinhood.
+function renderRangeOptions() {
+  const ranges = intervalInfo(state.interval).ranges;
+  rangeSelect.innerHTML = ranges.map(label => `<option value="${label}">${label}</option>`).join("");
+  rangeSelect.value = state.range;
+  rangeSelect.onchange = () => { state.range = rangeSelect.value; applyRange(); };
+}
+
+function loadSeries() {
+  const d = DATA[state.symbol][state.interval];
+  candleSeries.setData(d.candles);
+  volumeSeries.setData(d.volume);
+  OVERLAY_LIST.forEach(o => { if (lineSeries[o.key]) lineSeries[o.key].setData(d[o.key]); });
+  macdHist.setData(d.hist); macdLine.setData(d.macd); macdSignal.setData(d.signal);
+  adxLine.setData(d.adx); plusDi.setData(d.plus_di); minusDi.setData(d.minus_di);
+  chart.applyOptions({ timeScale:{ timeVisible: state.interval !== "1d" } });
+  const last = d.candles[d.candles.length - 1];
+  document.getElementById("symbol-name").textContent = state.symbol;
+  document.getElementById("symbol-meta").textContent = `${intervalInfo(state.interval).label} bars · ${d.candles.length}`;
+  document.getElementById("status-text").textContent = `Last bar ${formatTime(last.time)}`;
+}
+
+function selectSymbol(symbol) {
+  state.symbol = symbol;
+  history.replaceState(null, "", "#" + symbol);
+  loadSeries();
+  renderSymbolList();
+  applyRange();
+  const panel = document.getElementById("panel");
+  panel.classList.remove("panel-enter"); void panel.offsetWidth; panel.classList.add("panel-enter");
+}
+
+function changeInterval(key) {
+  state.interval = key;
+  const ranges = intervalInfo(key).ranges;
+  if (!ranges.includes(state.range)) state.range = ranges.includes("1Y") ? "1Y" : ranges[ranges.length - 1];
+  intervalSelect.value = key;
+  loadSeries();
+  renderRangeOptions();
+  applyRange();
+}
+
+function applyRange() {
+  const candles = DATA[state.symbol][state.interval].candles, last = candles[candles.length - 1];
+  const start = rangeStart(state.range, toSeconds(last.time));
+  const first = candles.find(c => toSeconds(c.time) >= start) || candles[0];
+  chart.timeScale().setVisibleRange({ from:first.time, to:last.time });
+  const change = (last.close / first.close - 1) * 100;
+  document.getElementById("last-price").textContent = `$${priceFormat.format(last.close)}`;
+  const rangeChange = document.getElementById("range-change");
+  rangeChange.textContent = signed(change);
+  rangeChange.className = change >= 0 ? "positive" : "negative";
+  document.getElementById("range-note").textContent = `${formatTime(first.time)} to ${formatTime(last.time)}`;
+  rangeSelect.value = state.range;
+}
+
+function showReadout(param) {
+  const readout = document.querySelector("#readout small");
+  const bar = param.seriesData && param.seriesData.get(candleSeries);
+  if (!bar) { readout.textContent = ""; return; }
+  readout.textContent = `${formatTime(param.time)}   O ${priceFormat.format(bar.open)}   H ${priceFormat.format(bar.high)}   L ${priceFormat.format(bar.low)}   C ${priceFormat.format(bar.close)}`;
+}
+
+function applyTheme(themeName) {
+  document.documentElement.dataset.theme = themeName;
+  document.querySelector('meta[name="theme-color"]').content = themeName === "dark" ? "#262624" : "#FAF9F5";
+  try { localStorage.setItem("stock-backtest-theme", themeName); } catch (error) { /* storage blocked: theme lasts this visit only */ }
+  applyChartTheme();
+  renderSymbolList();
+}
+
+document.getElementById("app-version").textContent = `v${VERSION}`;
+document.getElementById("theme-button").onclick = () => applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+chart.subscribeCrosshairMove(showReadout);
+renderIntervalOptions();
+renderRangeOptions();
+renderOverlayList();
+setOverlayVisibility();
+try { applyTheme(localStorage.getItem("stock-backtest-theme") === "dark" ? "dark" : "light"); } catch (error) { applyTheme("light"); }
+const initial = decodeURIComponent(location.hash.slice(1));
+selectSymbol(SYMBOLS.includes(initial) ? initial : SYMBOLS[0]);
+requestAnimationFrame(layoutPanes);
+</script>
+</body>
+</html>
