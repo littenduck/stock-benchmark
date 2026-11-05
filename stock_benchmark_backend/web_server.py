@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
 from stock_benchmark_backend import (indicator_calculation, indicator_registry, market_data, refresh_scheduler, request_limiter, rule_catalog,
-                                settings_loader, snapshot_storage, strategy_loader)
+                                settings_loader, snapshot_storage, strategy_loader, terminal_data)
 
 PROJECT_DIRECTORY = settings_loader.PROJECT_DIRECTORY
 VERSION_PATTERN = re.compile(r"^\d+\.\d+\.\d+$")
@@ -131,6 +131,21 @@ def web_server_get_strategy_list_page() -> FileResponse:
 def web_server_get_strategy_page(strategy_id: str) -> FileResponse:
     web_server_find_strategy_id_or_raise(strategy_id)
     return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "strategy.html"), headers={"Cache-Control": "no-cache"})
+
+
+@app.get("/terminal/{symbol}")
+def web_server_get_terminal_page(symbol: str) -> FileResponse:
+    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "terminal.html"), headers={"Cache-Control": "no-cache"})
+
+
+@app.get("/terminal.js")
+def web_server_get_terminal_script() -> FileResponse:
+    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "terminal.js"), headers={"Cache-Control": "no-cache"})
+
+
+@app.get("/terminal.css")
+def web_server_get_terminal_stylesheet() -> FileResponse:
+    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "terminal.css"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/page.js")
@@ -312,6 +327,29 @@ def web_server_get_fundamental_values_for_symbol(symbol: str) -> dict:
             return {"symbol": symbol, "generated_at": snapshot.get("generated_at"),
                     "value_list": symbol_result.get("fundamental_value_list", [])}
     raise HTTPException(status_code=404, detail="Unknown symbol: " + symbol)
+
+
+@app.get("/api/v1/terminal/{symbol}")
+def web_server_get_terminal_payload(symbol: str) -> dict:
+    """Daily bars, indicators, SMC structure, the dip_buy score and the other strategies' last results for one symbol in the snapshot."""
+    snapshot = web_server_load_snapshot_or_empty_snapshot()
+    symbol_result = next((result for result in snapshot["symbol_result_list"] if result["symbol"] == symbol), None)
+    if symbol_result is None:
+        raise HTTPException(status_code=404, detail="Unknown symbol: " + symbol)
+    try:
+        bars = terminal_data.terminal_data_load_bars(symbol)
+    except terminal_data.TerminalDataUnavailable:
+        raise HTTPException(status_code=503, detail="No price history for " + symbol)
+    fundamentals_by_symbol = {result["symbol"]: {
+        "price": result["price"],
+        "trailing_eps": next((value["value"] for value in result.get("fundamental_value_list", [])
+                              if value.get("indicator_name") == "trailing_twelve_month_eps"), None)}
+        for result in snapshot["symbol_result_list"]}
+    strategy_list = [{"strategy_id": definition.strategy_id, "display_name": dataclasses.asdict(definition.display_name),
+                      "evaluation": symbol_result["evaluation_by_strategy_id"].get(definition.strategy_id)}
+                     for definition in strategy_definition_by_id.values()]
+    return terminal_data.terminal_data_build_payload(symbol, bars, symbol_result.get("asset_type", "other"), fundamentals_by_symbol,
+                                                     strategy_list, snapshot.get("generated_at"))
 
 
 @app.get("/api/v1/evaluations/{strategy_id}/{symbol}")
