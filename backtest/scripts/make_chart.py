@@ -34,7 +34,7 @@ DEFAULT_SYMBOLS = ["QQQ", "TQQQ", "SOXX", "SOXL"]
 TEMPLATE_PATH = Path(__file__).resolve().parent / "chart_template.html"
 CSS_PATH = ROOT / "static" / "base.css"
 ICONS_PATH = ROOT / "static" / "icons.svg"
-VERSION_PATH = ROOT / "VERSION"
+VERSION_PATH = ROOT.parent / "version.txt"  # the project root version, same file the server reads
 UP, DOWN = "#00C805", "#FF5000"  # Robinhood green and red
 # Installed by `npm install` from package.json (lightweight-charts, pinned to 5.0.0).
 LIB_PATH = Path(__file__).resolve().parent.parent / "node_modules/lightweight-charts/dist/lightweight-charts.standalone.production.js"

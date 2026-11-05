@@ -18,11 +18,11 @@ VERSION_PATTERN = re.compile(r"^\d+\.\d+\.\d+$")
 
 
 def web_server_read_version() -> str:
-    """The one place the version is written: the VERSION file at the project root. The page and the API read it from here."""
-    with open(os.path.join(PROJECT_DIRECTORY, "VERSION"), encoding="utf8") as version_file:
+    """The one place the version is written: the version.txt file at the project root. The page and the API read it from here."""
+    with open(os.path.join(PROJECT_DIRECTORY, "version.txt"), encoding="utf8") as version_file:
         version = version_file.read().strip()
     if not VERSION_PATTERN.match(version):
-        raise SystemExit("VERSION must look like MAJOR.MINOR.PATCH, not " + repr(version))
+        raise SystemExit("version.txt must look like MAJOR.MINOR.PATCH, not " + repr(version))
     return version
 
 

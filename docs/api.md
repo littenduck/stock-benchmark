@@ -13,7 +13,7 @@ JSON over HTTP, read only, served by `stock_benchmark_backend/web_server.py`. An
 
 ## GET /api/v1/version
 
-`{"version": "<the VERSION file>"}`, read from the `VERSION` file at the project root, the only place the version is written. The snapshot's `status.version` carries the same value and the page shows it next to the title.
+`{"version": "<the version.txt file>"}`, read from the `version.txt` file at the project root, the only place the version is written. The snapshot's `status.version` carries the same value and the page shows it next to the title.
 
 ## GET /api/v1/rules
 
@@ -63,7 +63,7 @@ Every indicator, grouped like the rules: under the category of the first rule th
 {
   "schema_version": 4,
   "status": {
-    "version": "<the VERSION file>",
+    "version": "<the version.txt file>",
     "server_time": "2026-10-24T10:01:00-04:00",
     "generated_at": "2026-10-23T15:52:19-04:00",
     "market_is_open": true,
