@@ -100,6 +100,17 @@ Every indicator, grouped like the rules: under the category of the first rule th
 | `sparkline_close_price_list` | last 60 daily closes, oldest first |
 | `failed_symbol_list` | watchlist symbols whose data could not be fetched or evaluated |
 
+## GET /api/v1/terminal/{symbol}
+
+The data behind the symbol page `/terminal/{symbol}`. It downloads one year of daily bars (cached for 10 minutes; an empty download is tried
+three times), computes the indicators, the SMC structure and the dip_buy score, and adds the other strategies' results from the last snapshot.
+Unknown symbols (not in the snapshot) return 404; no price history returns 503. Every explanation is `{en, zh}`.
+
+Keys: `dates`, `ohlcv`, `indicators` (SMA20/50/200, Bollinger, %B, RSI(14), MACD, volume average and ratio), `smc` (swings, events with
+BOS/CHoCH and their order blocks, fair value gaps, equal levels, sweeps), `dip_buy` (score, verdict, points, lights, counts, PE),
+`strategy_card_list`, `pipeline` and `event_list`. PE is the price over the trailing EPS from the snapshot (yfinance); MUU and SNXX use MU and
+SNDK.
+
 ## GET /api/v1/evaluations/{strategy_id}/{symbol}
 
 The strategy tree for one symbol.

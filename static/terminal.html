@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terminal · Stock Benchmark</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/base.css">
+<link rel="stylesheet" href="/terminal.css">
+</head>
+<body data-title-key="terminal_title">
+<div class="terminal">
+  <aside class="terminal-side">
+    <header class="side-header">
+      <h2><a href="/" id="home-link">Stock Benchmark</a></h2>
+      <span class="side-buttons">
+        <button class="icon-button" id="theme-button" type="button"><svg class="icon" aria-hidden="true"><use href="/icons.svg#icon-theme"/></svg></button>
+        <button class="icon-button" id="language-button" type="button"><svg class="icon" aria-hidden="true"><use href="/icons.svg#icon-language"/></svg></button>
+      </span>
+    </header>
+    <nav id="symbol-list" aria-label="Symbols"></nav>
+  </aside>
+  <main class="terminal-main" id="terminal-main"><small id="loading"></small></main>
+</div>
+<script src="/language.js"></script>
+<script src="/terminal.js"></script>
+</body>
+</html>

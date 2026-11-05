@@ -165,7 +165,7 @@ def test_strategy_page_needs_a_known_strategy():
 
 
 STATIC_DIRECTORY = os.path.join(web_server.PROJECT_DIRECTORY, "static")
-PAGE_FILE_NAME_LIST = ["index.html", "rules.html", "indicators.html", "strategies.html", "strategy.html"]
+PAGE_FILE_NAME_LIST = ["index.html", "rules.html", "indicators.html", "strategies.html", "strategy.html", "terminal.html"]
 
 
 def test_every_page_loads_only_files_the_server_serves_and_stays_short():
@@ -182,7 +182,7 @@ def test_the_catalog_pages_use_only_known_text_keys():
     import re
     language_text = open(os.path.join(STATIC_DIRECTORY, "language.js"), encoding="utf8").read()
     key_set = set(re.findall(r"^\s*(?:\w+: \{.*\},\s*)?(\w+): \{ en:", language_text, re.M)) | set(re.findall(r"\b(\w+): \{ en:", language_text))
-    for file_name in ["rules.html", "indicators.html", "strategies.html", "strategy.html", "page.js"]:
+    for file_name in ["rules.html", "indicators.html", "strategies.html", "strategy.html", "page.js", "terminal.html", "terminal.js"]:
         text = open(os.path.join(STATIC_DIRECTORY, file_name), encoding="utf8").read()
         for key in re.findall(r"language(?:Text|Localize)\('(\w+)'", text) + re.findall(r"data-title-key=\"(\w+)\"", text):
             assert key in key_set, "{} uses the unknown text {}".format(file_name, key)
