@@ -4,7 +4,7 @@ A personal stock dashboard. It shows market indicators and followed symbols, eac
 
 ## Architecture
 
-Planned layout after the refactor (the code is not yet moved):
+Layout: three top-level folders. `frontend/` is the pages, `backend/` is the Python code, `data/` holds the hand-edited files (under `data/runtime/` the generated ones).
 
 ```mermaid
 flowchart TB
@@ -33,13 +33,13 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 ## Run
 
 ```bash
-.venv/bin/python -m uvicorn stock_benchmark_backend.web_server:app --port 8000
+.venv/bin/python -m uvicorn backend.app.web_server:app --port 8000
 ```
 
 Open http://localhost:8000. Data refreshes in the background while the US market is open. Refresh once by hand:
 
 ```bash
-.venv/bin/python -m stock_benchmark_backend.refresh_scheduler --once
+.venv/bin/python -m backend.benchmark.refresh_scheduler --once
 ```
 
 ## Test
@@ -52,10 +52,10 @@ Open http://localhost:8000. Data refreshes in the background while the US market
 
 | To change | Edit |
 |---|---|
-| Followed symbols | `config/symbols.yaml` |
-| Strategies | `config/strategies/*.yaml` (see `docs/strategy.md`) |
-| Rules and indicators | `config/rules.yaml`, `config/indicators.yaml` (see `docs/indicator.md`) |
-| Refresh interval, sidebar indicators | `config/settings.yaml` |
+| Followed symbols | `data/symbols/watchlist.yaml` |
+| Strategies | `data/strategies/*.yaml` (see `docs/strategy.md`) |
+| Rules and indicators | `data/rules/rules.yaml`, `data/indicators/indicators.yaml` (see `docs/indicator.md`) |
+| Refresh interval, sidebar indicators | `data/settings/benchmark.yaml` |
 | Page design | `docs/design.md` |
 | JSON API | `docs/api.md` |
 | Deployment | `docs/deployment.md` |

@@ -6,13 +6,13 @@ Backtests of classic stock and ETF strategies. Each strategy starts with 100k at
 
 | File | Purpose |
 |---|---|
-| `scripts/backtest_strategies.py` | Main run. Runs strategies A–X from 42 entry points (historical highs and lows) on QQQ/TQQQ. Each run gives four results: ideal (no tax), federal+CA, CA without the wash-sale rule, and federal only. The 2021-11-22 entry also writes a curve chart and an animation. |
-| `scripts/backtest_pair.py` | Runs the same strategies (A–O and V–X) on a base/leverage pair. Modes: `soxx_soxl` (SOXX base, SOXL leverage) and `qqq_tqqq` (cross-check against the main run). Uses a 12-entry subset of the QQQ entry dates. |
-| `scripts/make_report.py` | Reads the main run's summary CSV and writes a Markdown report and an after-tax return matrix. |
+| `backend/backtest/backtest_strategies.py` | Main run. Runs strategies A–X from 42 entry points (historical highs and lows) on QQQ/TQQQ. Each run gives four results: ideal (no tax), federal+CA, CA without the wash-sale rule, and federal only. The 2021-11-22 entry also writes a curve chart and an animation. |
+| `backend/backtest/backtest_pair.py` | Runs the same strategies (A–O and V–X) on a base/leverage pair. Modes: `soxx_soxl` (SOXX base, SOXL leverage) and `qqq_tqqq` (cross-check against the main run). Uses a 12-entry subset of the QQQ entry dates. |
+| `backend/backtest/make_report.py` | Reads the main run's summary CSV and writes a Markdown report and an after-tax return matrix. |
 
 Strategy groups: benchmarks (A, B), DCA (C, D), moving averages (E–K), indicators (L–O), allocation (P–S), sector rotation (T), high-dividend hold (U), and risk control (V–X).
 
-For the full rules, see `backtest_output/strategies_rules.md` after a run.
+For the full rules, see `data/runtime/backtest/strategies_rules.md` after a run.
 
 ### Assumptions
 
@@ -44,24 +44,24 @@ The old peak-2021 script used different letters. Old → new: A, B and C are unc
 Python 3 is required. The project was tested on Python 3.9. Node.js (with npm) is needed only for the chart page.
 
 ```bash
-# 1. Install dependencies (Python packages, then the chart library)
-pip install -r ../requirements.txt  # Python deps live in the repository root
+# 1. Install dependencies from the project root (Python packages; npm only for the chart page)
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 npm install
 
 # 2. Main run on QQQ/TQQQ, all 42 entries (takes a while; downloads data)
-python3 scripts/backtest_strategies.py
+.venv/bin/python -m backend.backtest strategies
 
 # 3. Pair run on SOXX/SOXL, 12-entry subset
-python3 scripts/backtest_pair.py soxx_soxl
+.venv/bin/python -m backend.backtest pair soxx_soxl
 
 # 4. Optional: QQQ/TQQQ pair cross-check against the main run
-python3 scripts/backtest_pair.py qqq_tqqq
+.venv/bin/python -m backend.backtest pair qqq_tqqq
 
 # 5. Markdown report (needs step 2)
-python3 scripts/make_report.py
+.venv/bin/python -m backend.backtest report
 ```
 
-Outputs go to `backtest_output/`:
+Outputs go to `data/runtime/backtest/`:
 
 - `strategies_report.md`: one table per entry, with ideal and after-tax results and max drawdown.
 - `strategies_after_tax_matrix.csv`: strategy × entry matrix of after-tax returns.

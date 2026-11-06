@@ -1,5 +1,7 @@
 # Plan V1.3.x
 
+> Historical record of the 1.3.x work. Paths in this file predate 1.4.0: `config/` is now `data/`, `static/` is `frontend/`, `stock_benchmark_backend/` is `backend/`, and `backtest/` is `backend/backtest/`.
+
 Current version: `VERSION` = 1.3.0 on `main`. This plan covers the 1.3.x line: fixes, then one feature, a fundamentals strategy that is tested before it is trusted.
 
 This file is the only plan in `docs/`. It replaces the earlier `docs/plan.md` (type system, executed) and `docs/plan_indicator_registry.md` (indicator registry, executed); both are in git history.

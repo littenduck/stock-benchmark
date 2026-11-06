@@ -1,6 +1,6 @@
 # API
 
-JSON over HTTP, read only, served by `stock_benchmark_backend/web_server.py`. Any client can use it: the web page, a future SwiftUI app, scripts.
+JSON over HTTP, read only, served by `backend/app/web_server.py`. Any client can use it: the web page, a future SwiftUI app, scripts.
 
 ## Conventions
 
@@ -9,7 +9,7 @@ JSON over HTTP, read only, served by `stock_benchmark_backend/web_server.py`. An
 - `schema_version` (currently `3`): within one version fields may only be added. Renaming, removing or changing the type of a field bumps the version (3 made text fields objects).
 - Text a person reads is an object `{"en": "...", "zh": "..."}`: strategy `display_name`, `summary`, `help_text`, `source`; gate `display_name`; rule `name`, `description` and `note`; group `display_name` and `description`; indicator `display_name`. Clients pick the language; `default_language` tells them which to start with.
 - Errors: HTTP 404 with `{"detail": "..."}` for an unknown strategy or symbol.
-- CORS is off unless `allowed_origin_list` in `config/settings.yaml` lists origins. Native apps do not need it.
+- CORS is off unless `allowed_origin_list` in `data/settings/benchmark.yaml` lists origins. Native apps do not need it.
 
 ## GET /api/v1/version
 
@@ -17,7 +17,7 @@ JSON over HTTP, read only, served by `stock_benchmark_backend/web_server.py`. An
 
 ## GET /api/v1/rules
 
-Every rule from `config/rules.yaml`, grouped by category (`MAC`, `TRD`, ...) and, inside a category, by topic (`topic_list` of the group, `topic` of the rule), with the strategies that use it. A rule has no weight: the weight and the `veto` flag are per strategy and appear in `used_by`. `indicator_description` is the bilingual text of the rule's indicator and `indicator_line_list` every line of that measure (`{"rule_id": "R-MAC-03", "line": "< 4.5"}`), so a client needs no second request to explain a rule.
+Every rule from `data/rules/rules.yaml`, grouped by category (`MAC`, `TRD`, ...) and, inside a category, by topic (`topic_list` of the group, `topic` of the rule), with the strategies that use it. A rule has no weight: the weight and the `veto` flag are per strategy and appear in `used_by`. `indicator_description` is the bilingual text of the rule's indicator and `indicator_line_list` every line of that measure (`{"rule_id": "R-MAC-03", "line": "< 4.5"}`), so a client needs no second request to explain a rule.
 
 ```json
 {"default_language": "en",
@@ -33,7 +33,7 @@ Every rule from `config/rules.yaml`, grouped by category (`MAC`, `TRD`, ...) and
                  "used_by": [{"strategy_id": "sell_put_four_in_one", "display_name": {"en": "Sell Put 4-in-1", "zh": "Sell Put 四合一"}, "weight": 5, "veto": true}]}]}]}
 ```
 
-`status`: `built`, `todo`, `no_data`. A rule with an `indicator` gets `method`, `quantifiable`, `backtestable`, `history_source`, `history_start`, `status`, `fetch_group`, `fetch_every` (how often the source is asked) and `max_age` (how old the newest value may be before the rule reads unknown) from that indicator in `config/indicators.yaml`; a manual rule has them from `config/rules.yaml` and no fetch fields. `method`: `api_fetch`, `scrape`, `computed`, `ai_search`, `manual`. `quantifiable`: `yes`, `part`, `no`. `backtestable`: `yes` or `no`, whether free historical data can rebuild what the rule would have said on a past date; a `yes` rule also has `history_source` (for example `fred:DGS10`) and `history_start` (a year, month or day). Rules retired from the catalog are listed in `retired_rule_list` of `config/rules.yaml`, never in this response. `band_of` names the main rule when this rule is another line of the same measure (for example `R-SEN-04`, VIX below 25, points to `R-SEN-01`).
+`status`: `built`, `todo`, `no_data`. A rule with an `indicator` gets `method`, `quantifiable`, `backtestable`, `history_source`, `history_start`, `status`, `fetch_group`, `fetch_every` (how often the source is asked) and `max_age` (how old the newest value may be before the rule reads unknown) from that indicator in `data/indicators/indicators.yaml`; a manual rule has them from `data/rules/rules.yaml` and no fetch fields. `method`: `api_fetch`, `scrape`, `computed`, `ai_search`, `manual`. `quantifiable`: `yes`, `part`, `no`. `backtestable`: `yes` or `no`, whether free historical data can rebuild what the rule would have said on a past date; a `yes` rule also has `history_source` (for example `fred:DGS10`) and `history_start` (a year, month or day). Rules retired from the catalog are listed in `retired_rule_list` of `data/rules/rules.yaml`, never in this response. `band_of` names the main rule when this rule is another line of the same measure (for example `R-SEN-04`, VIX below 25, points to `R-SEN-01`).
 
 ## GET /api/v1/strategies
 
@@ -91,7 +91,7 @@ Every indicator, grouped like the rules: under the category of the first rule th
 |---|---|
 | `status.generated_at` | when the data was computed; `null` before the first snapshot |
 | `status.server_time` | server clock now; compute data age as `server_time - generated_at` |
-| `status.market_is_open` | US regular hours, Monday to Friday 9:30 to 16:00 ET; closed on `market_holiday_list` days, 13:00 close on `market_early_close_list` days (`config/settings.yaml`) |
+| `status.market_is_open` | US regular hours, Monday to Friday 9:30 to 16:00 ET; closed on `market_holiday_list` days, 13:00 close on `market_early_close_list` days (`data/settings/benchmark.yaml`) |
 | `status.stale_after_minutes` | while the market is open, older data should be shown as stale |
 | `change_unit` | `percent` (relative change) or `basis_points` (absolute change of a rate) |
 | `is_pass` | `true` passed, `false` vetoed by a rule marked `veto`, `null` unknown |

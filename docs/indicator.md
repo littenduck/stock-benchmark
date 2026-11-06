@@ -4,9 +4,9 @@ Three levels, three kinds of file:
 
 | Level | What it is | Where it is written |
 |---|---|---|
-| **Indicator** | one measured quantity (a number or a yes/no), with where it comes from and how often it is fetched | `config/indicators.yaml` |
-| **Rule** | a judgment on one indicator: an operator and a line (`R-MAC-03`: the 10-year yield is below 4.5). Several rules can share an indicator | `config/rules.yaml` |
-| **Strategy** | which rules, with what weight and veto | `config/strategies/*.yaml` |
+| **Indicator** | one measured quantity (a number or a yes/no), with where it comes from and how often it is fetched | `data/indicators/indicators.yaml` |
+| **Rule** | a judgment on one indicator: an operator and a line (`R-MAC-03`: the 10-year yield is below 4.5). Several rules can share an indicator | `data/rules/rules.yaml` |
+| **Strategy** | which rules, with what weight and veto | `data/strategies/*.yaml` |
 
 A rule refers to an indicator by its short id (`indicator: I-003`), and the loader looks up its long name. A value that cannot be fetched, or is older than the indicator's `max_age`, is `unknown` (shown as ❓, left out of the score).
 
@@ -18,11 +18,11 @@ A rule has `rule_id` (`R-MAC-03`) and a short `rule_name` (`ten_year_below_4_5pc
 
 ### The selected put
 
-Option indicators describe the selected put of each expiration window: the out-of-the-money put whose absolute Delta is closest to `target_absolute_delta` in `config/settings.yaml`. The descriptions say "the selected put" and do not repeat the number, so changing the setting does not leave a stale text behind.
+Option indicators describe the selected put of each expiration window: the out-of-the-money put whose absolute Delta is closest to `target_absolute_delta` in `data/settings/benchmark.yaml`. The descriptions say "the selected put" and do not repeat the number, so changing the setting does not leave a stale text behind.
 
 ### The indicator file
 
-The meaning of every indicator, how it is read, where the live value and the history come from and what values are typical is the bilingual `description` of that indicator in `config/indicators.yaml`; the rule catalog page and the hover card show it under each rule, together with every line of the measure. This file does not repeat it. A new indicator needs a description in both languages (a test checks).
+The meaning of every indicator, how it is read, where the live value and the history come from and what values are typical is the bilingual `description` of that indicator in `data/indicators/indicators.yaml`; the rule catalog page and the hover card show it under each rule, together with every line of the measure. This file does not repeat it. A new indicator needs a description in both languages (a test checks).
 
 Each indicator has `scope` (market for the same value for every symbol, symbol, or window for one option expiration window), a `unit` (required when a rule tests it with a number; `""` for a pure ratio or index; `%`, `bp`, `pp`, `USD` ... shown after the number of a rule line), `method`, `status`, the backtest facts (`backtestable`, `history_source`, `history_start`) and the schedule:
 
@@ -38,7 +38,7 @@ How a refresh works: the background loop wakes every minute; a refresh is due wh
 
 ## Live indicators on the dashboard
 
-Each refresh adds these to the indicators above, asking each source only when it is due (see the schedule above and `config/indicators.yaml`; the Kept for column shows the usual interval). A source that fails or is too old only turns its own rules to Unknown.
+Each refresh adds these to the indicators above, asking each source only when it is due (see the schedule above and `data/indicators/indicators.yaml`; the Kept for column shows the usual interval). A source that fails or is too old only turns its own rules to Unknown.
 
 | What | Source | Kept for | Newest value counts for |
 |---|---|---|---|
@@ -50,7 +50,7 @@ Each refresh adds these to the indicators above, asking each source only when it
 | Insider net selling (180 days) and purchase count (90 days) | yfinance `insider_transactions`, told apart by the text "Sale" and "Purchase" | 1 hour | now |
 | Short interest, percent of shares | FINRA with yfinance shares outstanding | 1 hour | 45 days |
 | 3-year growth, ROIC, interest coverage, FCF change, share count change | SEC EDGAR (needs `EDGAR_CONTACT`, else unknown) | 1 day | the latest filing |
-| FOMC, CPI, PCE and jobs report dates | the release calendar in `config/settings.yaml` (`macro_event_calendar`), kept by hand; unknown past `macro_event_covered_until` | file | the window of the option |
+| FOMC, CPI, PCE and jobs report dates | the release calendar in `data/settings/benchmark.yaml` (`macro_event_calendar`), kept by hand; unknown past `macro_event_covered_until` | file | the window of the option |
 | Election day, quadruple witching, SPMO rebalance (the months March and September) | the calendar | none | today |
 | Option quotes (spread, open interest, volume, strike, premium, expected move, skew) | yfinance option chain; the implied volatility is solved from the mid of a live bid and ask (Black-Scholes), not read from Yahoo's own column | each refresh | only for contracts with a live bid and ask |
 | Covered call (about 30 days out, strike about 10% above the price) | yfinance call chain; strikes need no live quote | each refresh | now |
@@ -64,8 +64,8 @@ Funds (SPY, QQQ) have no company figures, so their company rules read Unknown.
 
 ## Not built yet
 
-Account values (net value, cash, positions) and the strategy gates that need them (capital structure, position limits). The release calendar in `config/settings.yaml` ends in 2027 (PCE in 2026); add the next year's dates before then. Rules still unknown: R-IND-02, R-VAL-01, R-TRD-02 and R-TRD-03 are marked difficulty 5 in their notes and are not planned (they need hundreds of requests per refresh or a PDF read by hand); NAAIM (R-SEN-16/21, the archive copy is months old); the mega IPO list (R-SEN-22) and the industry, customer and supplier earnings dates (R-EVT-03/11), which need a list kept by hand; implied leverage of the option you buy (R-RET-07), whose definition is not settled.
+Account values (net value, cash, positions) and the strategy gates that need them (capital structure, position limits). The release calendar in `data/settings/benchmark.yaml` ends in 2027 (PCE in 2026); add the next year's dates before then. Rules still unknown: R-IND-02, R-VAL-01, R-TRD-02 and R-TRD-03 are marked difficulty 5 in their notes and are not planned (they need hundreds of requests per refresh or a PDF read by hand); NAAIM (R-SEN-16/21, the archive copy is months old); the mega IPO list (R-SEN-22) and the industry, customer and supplier earnings dates (R-EVT-03/11), which need a list kept by hand; implied leverage of the option you buy (R-RET-07), whose definition is not settled.
 
 ## Accounting quality (computed from SEC filings)
 
-Three indicators are worked out from EDGAR company facts, so they have a history for backtests: `I-123` accruals as a percent of average total assets, `I-124` free cash flow after stock compensation, and `I-125` the Piotroski F-score (nine yes or no tests, 0 to 9). Their rules are `R-ACC-01` to `R-ACC-03`, in the ACC group at the end of `config/rules.yaml`, because indicator ids must rise along the rule order.
+Three indicators are worked out from EDGAR company facts, so they have a history for backtests: `I-123` accruals as a percent of average total assets, `I-124` free cash flow after stock compensation, and `I-125` the Piotroski F-score (nine yes or no tests, 0 to 9). Their rules are `R-ACC-01` to `R-ACC-03`, in the ACC group at the end of `data/rules/rules.yaml`, because indicator ids must rise along the rule order.
