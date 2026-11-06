@@ -17,11 +17,16 @@ import yaml
 PROJECT_DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_DIRECTORY)
 
-from stock_benchmark_backend import project_paths
-from stock_benchmark_backend import (  # noqa: E402
-    backtest, company_indicators, edgar_data, forward_returns, factor_statistics, history_series, market_data, rule_catalog,
-    strategy_loader,
-)
+from backend.shared import project_paths
+from backend.benchmark import score_backtest  # noqa: E402
+from backend.benchmark import company_indicators  # noqa: E402
+from backend.benchmark import edgar_data  # noqa: E402
+from backend.benchmark import forward_returns  # noqa: E402
+from backend.benchmark import factor_statistics  # noqa: E402
+from backend.benchmark import history_series  # noqa: E402
+from backend.benchmark import market_data  # noqa: E402
+from backend.benchmark import rule_catalog  # noqa: E402
+from backend.benchmark import strategy_loader  # noqa: E402
 
 REPORT_PATH = os.path.join(PROJECT_DIRECTORY, "docs", "reports", "fundamentals_backtest.md")
 HORIZON_NAME_BY_TRADING_DAYS = {63: "3 months", 126: "6 months", 252: "12 months"}
@@ -68,7 +73,7 @@ def fetch_stock_company_tables(symbol_list, price_by_symbol):
 def run_family_summaries(score_by_family, return_table_by_horizon, horizon, lag_count, cost_bps):
     result = {}
     for family, score_table in score_by_family.items():
-        result[family] = backtest.backtest_summarize_factor(score_table, return_table_by_horizon[horizon], cost_bps, lag_count)
+        result[family] = score_backtest.backtest_summarize_factor(score_table, return_table_by_horizon[horizon], cost_bps, lag_count)
     return result
 
 
@@ -96,21 +101,21 @@ def main():
     price_by_symbol = {symbol: history for symbol, history in price_history_by_symbol.items()}
     close_by_symbol = {symbol: history["Close"] for symbol, history in price_by_symbol.items()}
     calendar = pandas.DatetimeIndex(sorted(set().union(*[set(close.index) for close in close_by_symbol.values()])))
-    rebalance_dates = backtest.backtest_rebalance_dates(calendar)
+    rebalance_dates = score_backtest.backtest_rebalance_dates(calendar)
     rebalance_dates = rebalance_dates[(rebalance_dates >= FIRST_SCORE_DATE) & (rebalance_dates <= calendar[-1] - pandas.Timedelta(days=400))]
 
     company_table_by_symbol, sector_by_symbol, skipped = fetch_stock_company_tables(symbol_list, price_by_symbol)
     stock_list = sorted(company_table_by_symbol)
     stock_close_by_symbol = {symbol: close_by_symbol[symbol] for symbol in stock_list}
 
-    score_tables = backtest.backtest_build_score_table(strategy, company_table_by_symbol, rebalance_dates)
-    baseline_tables = backtest.backtest_build_baseline_score_tables(company_table_by_symbol, stock_close_by_symbol, rebalance_dates)
+    score_tables = score_backtest.backtest_build_score_table(strategy, company_table_by_symbol, rebalance_dates)
+    baseline_tables = score_backtest.backtest_build_baseline_score_tables(company_table_by_symbol, stock_close_by_symbol, rebalance_dates)
     score_by_family = {"fundamentals": score_tables["score"], **{k: v for k, v in baseline_tables.items() if not k.startswith("random_")}}
     random_table_list = [v for k, v in baseline_tables.items() if k.startswith("random_")]
 
     return_table_by_horizon = forward_returns.forward_returns_build_table(stock_close_by_symbol, list(HORIZON_NAME_BY_TRADING_DAYS))
     sector_etf_by_sector = company_indicators.SECTOR_ETF_BY_SECTOR_NAME
-    etf_symbol_by_symbol = backtest.backtest_sector_etf_lookup(sector_by_symbol, sector_etf_by_sector)
+    etf_symbol_by_symbol = score_backtest.backtest_sector_etf_lookup(sector_by_symbol, sector_etf_by_sector)
     # The sector ETFs are not in symbols.yaml, so fetch their prices too; without them every excess return is missing.
     etf_history_by_symbol = market_data.market_data_fetch_daily_price_history_for_symbol_list(
         sorted(set(sector_etf_by_sector.values()) | {"SPY"}), PRICE_HISTORY_PERIOD)
@@ -129,7 +134,7 @@ def main():
     report_lines += ["## Coverage", "", "- Stocks tested: {} ({})".format(len(stock_list), ", ".join(stock_list)),
                      "- Stocks skipped: {}".format("; ".join("{} ({})".format(s, r) for s, r in sorted(skipped.items())) or "none"),
                      "- Rebalance dates: {} from {} to {}".format(len(rebalance_dates), rebalance_dates[0].date(), rebalance_dates[-1].date()),
-                     "- Average unknown share of the fundamentals score: {}".format(format_number(backtest.backtest_unknown_share(score_tables["unknown_weight_ratio"]), 2)),
+                     "- Average unknown share of the fundamentals score: {}".format(format_number(score_backtest.backtest_unknown_share(score_tables["unknown_weight_ratio"]), 2)),
                      "- Cost assumption: {} bp per trade, two trades per monthly rebalance.".format(cost_bps), ""]
     for horizon, name in HORIZON_NAME_BY_TRADING_DAYS.items():
         report_lines += ["## Sector-neutral excess return, {} ahead".format(name), "",
@@ -137,19 +142,19 @@ def main():
         summaries = run_family_summaries(score_by_family, excess_by_horizon, horizon, lag_count, cost_bps)
         for family, summary in summaries.items():
             report_lines.append(table_row(family, summary))
-        random_summary_list = [backtest.backtest_summarize_factor(table, excess_by_horizon[horizon], cost_bps, lag_count) for table in random_table_list]
-        low, high = backtest.backtest_random_band(random_summary_list, "rank_ic_mean")
+        random_summary_list = [score_backtest.backtest_summarize_factor(table, excess_by_horizon[horizon], cost_bps, lag_count) for table in random_table_list]
+        low, high = score_backtest.backtest_random_band(random_summary_list, "rank_ic_mean")
         report_lines += ["", "Random baseline rank IC, 5th to 95th percentile over {} repeats: {} to {}.".format(
             len(random_summary_list), format_number(low), format_number(high)), ""]
 
     twelve = excess_by_horizon[252]
-    in_sample = backtest.backtest_summarize_factor(score_tables["score"][score_tables["score"].index <= IN_SAMPLE_END],
+    in_sample = score_backtest.backtest_summarize_factor(score_tables["score"][score_tables["score"].index <= IN_SAMPLE_END],
                                                    twelve[twelve.index <= IN_SAMPLE_END], cost_bps, lag_count)
     out_sample_index = score_tables["score"].index[score_tables["score"].index > IN_SAMPLE_END]
-    out_sample = backtest.backtest_summarize_factor(score_tables["score"].loc[out_sample_index], twelve.loc[out_sample_index], cost_bps, lag_count)
-    random_out_sample = [backtest.backtest_summarize_factor(t.loc[out_sample_index], twelve.loc[out_sample_index], cost_bps, lag_count)
+    out_sample = score_backtest.backtest_summarize_factor(score_tables["score"].loc[out_sample_index], twelve.loc[out_sample_index], cost_bps, lag_count)
+    random_out_sample = [score_backtest.backtest_summarize_factor(t.loc[out_sample_index], twelve.loc[out_sample_index], cost_bps, lag_count)
                          for t in random_table_list]
-    _, random_high = backtest.backtest_random_band(random_out_sample, "rank_ic_mean")
+    _, random_high = score_backtest.backtest_random_band(random_out_sample, "rank_ic_mean")
     gate_checks = {
         "out-of-sample rank IC mean above 0": (out_sample["rank_ic_mean"] or 0) > 0,
         "out-of-sample Newey-West t above 2": (out_sample["rank_ic_t"] or 0) > 2,

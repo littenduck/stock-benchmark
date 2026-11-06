@@ -1,5 +1,5 @@
-from stock_benchmark_backend import refresh_scheduler
-from stock_benchmark_backend.strategy_evaluation import IndicatorValue
+from backend.benchmark import refresh_scheduler
+from backend.benchmark.strategy_evaluation import IndicatorValue
 
 
 def test_fundamental_list_has_company_groups_only_and_keeps_unit_and_source():
@@ -21,7 +21,7 @@ def test_fundamental_value_list_only_lists_known_values_with_source():
 
 def test_empty_price_history_gives_no_series_and_dates_lose_their_time_zone(monkeypatch):
     import pandas
-    from stock_benchmark_backend import live_indicators
+    from backend.benchmark import live_indicators
 
     class FakeTicker:
         def __init__(self, history):

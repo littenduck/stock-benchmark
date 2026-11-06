@@ -1,6 +1,6 @@
 import pytest
 
-from stock_benchmark_backend.localized_text import (
+from backend.shared.localized_text import (
     LocalizedText, localized_text_build_from_raw_value, localized_text_build_optional_from_raw_value,
 )
 

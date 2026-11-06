@@ -4,8 +4,28 @@
     {
       "name": "stock-benchmark",
       "runtimeExecutable": "/Users/kevin/stock-benchmark/.venv/bin/python",
-      "runtimeArgs": ["-m", "uvicorn", "stock_benchmark_backend.web_server:app", "--app-dir", "/Users/kevin/stock-benchmark", "--port", "8000"],
+      "runtimeArgs": [
+        "-m",
+        "uvicorn",
+        "backend.app.web_server:app",
+        "--app-dir",
+        "/Users/kevin/stock-benchmark",
+        "--port",
+        "8000"
+      ],
       "port": 8000
+    },
+    {
+      "name": "backtest-output",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8001",
+        "--directory",
+        "data/runtime/backtest"
+      ],
+      "port": 8001
     }
   ]
 }

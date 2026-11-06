@@ -3,8 +3,11 @@ import os
 import pytest
 import yaml
 
-from stock_benchmark_backend import indicator_calculation, indicator_registry, rule_catalog, settings_loader
-from stock_benchmark_backend import project_paths
+from backend.benchmark import indicator_calculation
+from backend.benchmark import indicator_registry
+from backend.benchmark import rule_catalog
+from backend.benchmark import settings_loader
+from backend.shared import project_paths
 
 INDICATOR_FILE_PATH = project_paths.INDICATOR_FILE_PATH
 

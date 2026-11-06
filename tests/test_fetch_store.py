@@ -2,8 +2,10 @@ import os
 
 import pandas
 
-from stock_benchmark_backend import fetch_cache, fetch_store, indicator_registry
-from stock_benchmark_backend import project_paths
+from backend.benchmark import fetch_cache
+from backend.benchmark import fetch_store
+from backend.benchmark import indicator_registry
+from backend.shared import project_paths
 
 
 def build_registry():

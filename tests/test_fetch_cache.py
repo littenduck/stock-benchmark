@@ -6,9 +6,10 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from stock_benchmark_backend import fetch_cache, indicator_registry
-from stock_benchmark_backend import project_paths
-from stock_benchmark_backend.strategy_evaluation import IndicatorValue
+from backend.benchmark import fetch_cache
+from backend.benchmark import indicator_registry
+from backend.shared import project_paths
+from backend.benchmark.strategy_evaluation import IndicatorValue
 
 NEW_YORK = ZoneInfo("America/New_York")
 MINUTE, HOUR = 60, 3600

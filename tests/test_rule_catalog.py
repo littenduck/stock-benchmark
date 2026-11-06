@@ -3,13 +3,13 @@ import re
 
 import pytest
 
-from stock_benchmark_backend import indicator_calculation
-from stock_benchmark_backend.localized_text import CHINESE_CHARACTER_PATTERN, LocalizedText
-from stock_benchmark_backend.rule_catalog import RetiredRule, RuleCatalog, RuleCatalogEntry, RuleGroup, \
+from backend.benchmark import indicator_calculation
+from backend.shared.localized_text import CHINESE_CHARACTER_PATTERN, LocalizedText
+from backend.benchmark.rule_catalog import RetiredRule, RuleCatalog, RuleCatalogEntry, RuleGroup, \
     rule_catalog_load_rule_catalog_from_yaml_file, rule_catalog_validate_rule_catalog_against_known_indicators
-from stock_benchmark_backend import project_paths
-from stock_benchmark_backend.settings_loader import settings_loader_load_settings_from_yaml_file
-from stock_benchmark_backend.strategy_loader import strategy_loader_build_rule_definition_from_catalog, \
+from backend.shared import project_paths
+from backend.benchmark.settings_loader import settings_loader_load_settings_from_yaml_file
+from backend.benchmark.strategy_loader import strategy_loader_build_rule_definition_from_catalog, \
     strategy_loader_load_all_strategy_definitions_from_directory
 
 CATALOG_FILE_PATH = project_paths.RULE_FILE_PATH
@@ -211,14 +211,14 @@ def test_a_duplicate_or_malformed_rule_name_is_reported():
 
 
 def build_topic_catalog(entry_topic_list, topic_id_list=("a", "b")):
-    from stock_benchmark_backend.rule_catalog import RuleTopic
+    from backend.benchmark.rule_catalog import RuleTopic
     group = RuleGroup("TST", LocalizedText("T", "T"), LocalizedText("", ""), topic_list=[RuleTopic(name, LocalizedText(name, name)) for name in topic_id_list])
     entry_list = [build_entry("R-TST-%02d" % number, topic=topic) for number, topic in enumerate(entry_topic_list, start=1)]
     return RuleCatalog([group], {entry.rule_id: entry for entry in entry_list})
 
 
 def test_numbers_run_in_file_order_without_gaps_and_topics_are_unbroken_runs():
-    from stock_benchmark_backend.rule_catalog import rule_catalog_validate_numbering_and_topics as validate
+    from backend.benchmark.rule_catalog import rule_catalog_validate_numbering_and_topics as validate
     assert validate(build_topic_catalog(["a", "a", "b"])) == []
     assert any("split in two runs" in error for error in validate(build_topic_catalog(["a", "b", "a"])))
     assert any("unknown topic" in error for error in validate(build_topic_catalog(["a", "zzz"])))
@@ -242,7 +242,7 @@ def test_the_project_catalog_numbers_every_category_from_01_in_its_topic_order()
 
 
 def test_a_line_of_a_measure_uses_the_same_indicator_and_runs_in_one_direction():
-    from stock_benchmark_backend.rule_catalog import rule_catalog_validate_tiers
+    from backend.benchmark.rule_catalog import rule_catalog_validate_tiers
     assert rule_catalog_validate_tiers(rule_catalog_load_rule_catalog_from_yaml_file(CATALOG_FILE_PATH)) == []
     catalog = build_catalog(build_entry("R-TST-01", value=10), build_entry("R-TST-02", value=30, band_of="R-TST-01"),
                             build_entry("R-TST-03", value=20, band_of="R-TST-01"),
@@ -364,7 +364,7 @@ def test_every_description_is_made_of_clean_sentences():
 
 def test_the_line_of_a_rule_is_written_in_both_languages():
     catalog = rule_catalog_load_rule_catalog_from_yaml_file(CATALOG_FILE_PATH)
-    from stock_benchmark_backend.rule_catalog import rule_catalog_describe_line
+    from backend.benchmark.rule_catalog import rule_catalog_describe_line
     for entry in catalog.rule_entry_by_id.values():
         if entry.operator:
             line = rule_catalog_describe_line(entry)
@@ -373,7 +373,7 @@ def test_the_line_of_a_rule_is_written_in_both_languages():
 
 
 def test_the_lines_of_a_rule_are_scaled_and_carry_their_unit_once():
-    from stock_benchmark_backend.rule_catalog import rule_catalog_describe_line
+    from backend.benchmark.rule_catalog import rule_catalog_describe_line
     catalog = rule_catalog_load_rule_catalog_from_yaml_file(CATALOG_FILE_PATH)
     line_by_id = {rule_id: rule_catalog_describe_line(catalog.rule_entry_by_id[rule_id]) for rule_id in ("R-CTR-04", "R-LIQ-04", "R-LIQ-05", "R-LIQ-01", "R-RET-07", "R-CTR-01")}
     assert line_by_id["R-CTR-04"] == {"en": "30 to 45 days", "zh": "30 到 45 天"}

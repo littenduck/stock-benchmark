@@ -81,7 +81,8 @@ def main() -> None:
 
     block_network()
     from fastapi.testclient import TestClient
-    from stock_benchmark_backend import refresh_scheduler, web_server
+    from backend.benchmark import refresh_scheduler
+    from backend.app import web_server
 
     # The server reads the snapshot path at request time, so pointing it at the frozen copy is enough.
     refresh_scheduler.SNAPSHOT_FILE_PATH = os.path.abspath(os.path.expanduser(args.snapshot))

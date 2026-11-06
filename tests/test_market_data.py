@@ -3,8 +3,8 @@ from zoneinfo import ZoneInfo
 
 import pandas
 
-from stock_benchmark_backend import market_data
-from stock_benchmark_backend.market_data import NEW_YORK_TIME_ZONE, market_data_determine_whether_us_market_is_open
+from backend.benchmark import market_data
+from backend.benchmark.market_data import NEW_YORK_TIME_ZONE, market_data_determine_whether_us_market_is_open
 
 
 def build_new_york_time(year, month, day, hour, minute):

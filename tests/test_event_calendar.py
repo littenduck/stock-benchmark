@@ -3,8 +3,9 @@ import datetime
 import pytest
 import yaml
 
-from stock_benchmark_backend import event_calendar, settings_loader
-from stock_benchmark_backend import project_paths
+from backend.benchmark import event_calendar
+from backend.benchmark import settings_loader
+from backend.shared import project_paths
 
 CALENDAR = [
     {"event_name": "FOMC", "event_date": "2026-10-27", "event_end_date": "2026-10-28"},

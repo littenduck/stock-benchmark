@@ -1,7 +1,7 @@
 import numpy
 import pandas
 
-from stock_benchmark_backend import fundamental_series
+from backend.benchmark import fundamental_series
 
 FILED_2020 = "2020-02-10"
 FILED_2021 = "2021-02-10"
@@ -65,7 +65,7 @@ def test_each_piotroski_test_is_a_yes_or_no_on_the_same_inputs():
 
 def test_revenue_growth_is_the_latest_quarter_against_the_same_quarter_a_year_earlier():
     """Yahoo's revenueGrowth for AAPL: quarter ended 2026-06-27 (109.417 bn) against 2025-06-28 (94.036 bn), about 16.4%."""
-    from stock_benchmark_backend import edgar_data
+    from backend.benchmark import edgar_data
     facts = {"facts": {"us-gaap": {"Revenues": {"units": {"USD": [
         {"start": "2025-03-30", "end": "2025-06-28", "val": 94_036_000_000, "filed": "2025-08-01", "form": "10-Q"},
         {"start": "2026-03-29", "end": "2026-06-27", "val": 109_417_000_000, "filed": "2026-07-31", "form": "10-Q"},

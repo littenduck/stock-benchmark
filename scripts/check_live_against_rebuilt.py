@@ -17,8 +17,11 @@ import yaml
 PROJECT_DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_DIRECTORY)
 
-from stock_benchmark_backend import project_paths
-from stock_benchmark_backend import company_indicators, history_series, market_data, yahoo_company  # noqa: E402
+from backend.shared import project_paths
+from backend.benchmark import company_indicators  # noqa: E402
+from backend.benchmark import history_series  # noqa: E402
+from backend.benchmark import market_data  # noqa: E402
+from backend.benchmark import yahoo_company  # noqa: E402
 
 RELATIVE_TOLERANCE = 0.05
 ABSOLUTE_TOLERANCE_FOR_RATIO = 0.05

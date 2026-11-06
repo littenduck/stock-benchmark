@@ -41,8 +41,11 @@ def counted_urlopen(url, *args, **kwargs):
 yfinance_data.YfData.get = counted_yf_get
 urllib.request.urlopen = counted_urlopen
 
-from stock_benchmark_backend import refresh_scheduler, rule_catalog, settings_loader, strategy_loader  # noqa: E402
-from stock_benchmark_backend import project_paths  # noqa: E402
+from backend.benchmark import refresh_scheduler  # noqa: E402
+from backend.benchmark import rule_catalog  # noqa: E402
+from backend.benchmark import settings_loader  # noqa: E402
+from backend.benchmark import strategy_loader  # noqa: E402
+from backend.shared import project_paths  # noqa: E402
 
 
 def load_everything():
@@ -75,8 +78,10 @@ class FakeClock:
 def run_ticks(settings, strategies, tick_count: int, minutes_between_ticks: int) -> None:
     """Refresh tick_count times, moving the clock between refreshes; shows how many requests each refresh makes once the cache has an answer."""
     import datetime
-    from stock_benchmark_backend import indicator_registry, market_data, yahoo_gate
-    from stock_benchmark_backend.fetch_cache import FetchCache
+    from backend.benchmark import indicator_registry
+    from backend.benchmark import market_data
+    from backend.benchmark import yahoo_gate
+    from backend.benchmark.fetch_cache import FetchCache
     yahoo_gate.yahoo_gate_install()
     registry = indicator_registry.indicator_registry_load_from_yaml_file(project_paths.INDICATOR_FILE_PATH)
     clock = FakeClock()

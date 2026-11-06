@@ -17,7 +17,6 @@ import shutil
 import sys
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-BACKTEST_SCRIPT_DIRECTORY = os.path.join(PROJECT_ROOT, "backtest", "scripts")
 GOLDEN_ROOT = os.path.expanduser("~/stock-benchmark-golden")
 PRICE_DIRECTORY = os.path.join(GOLDEN_ROOT, "fixtures", "prices")
 GOLDEN_ENTRY_COUNT = 3
@@ -55,8 +54,8 @@ def main() -> None:
     args = parser.parse_args()
 
     install_record_or_replay(args.mode)
-    sys.path.insert(0, BACKTEST_SCRIPT_DIRECTORY)
-    import backtest_strategies as bs
+    sys.path.insert(0, PROJECT_ROOT)
+    from backend.backtest import backtest_strategies as bs
 
     bs.ENTRY_SCENARIOS = bs.ENTRY_SCENARIOS[:GOLDEN_ENTRY_COUNT]
     output = os.path.join(GOLDEN_ROOT, args.label, "backtest")

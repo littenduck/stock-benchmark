@@ -1,7 +1,7 @@
 import numpy
 import pandas
 
-from stock_benchmark_backend import factor_statistics
+from backend.benchmark import factor_statistics
 
 DATE_INDEX = pandas.bdate_range("2024-01-01", periods=5)
 SYMBOL_LIST = ["S{:02d}".format(number) for number in range(12)]

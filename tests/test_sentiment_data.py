@@ -4,7 +4,7 @@ import json
 import pandas
 import pytest
 
-from stock_benchmark_backend import sentiment_data
+from backend.benchmark import sentiment_data
 
 
 def test_cnn_json_becomes_a_daily_score_series():

@@ -4,8 +4,10 @@ import os
 import pytest
 from fastapi import HTTPException
 
-from stock_benchmark_backend import project_paths
-from stock_benchmark_backend import refresh_scheduler, snapshot_storage, web_server
+from backend.shared import project_paths
+from backend.benchmark import refresh_scheduler
+from backend.benchmark import snapshot_storage
+from backend.app import web_server
 
 STRATEGY_ID = web_server.application_settings.default_strategy_id
 # The rules and gates checked below belong to the sell put strategy, which is no longer the default.
@@ -111,12 +113,12 @@ def test_replaced_snapshot_file_is_loaded_again(snapshot_file_path):
 
 
 def test_rule_card_script_is_served():
-    response = web_server.web_server_get_rule_card_script()
+    response = web_server.web_server_frontend_file_response("rule-card.js")
     assert os.path.exists(response.path) and "ruleCardBind" in open(response.path, encoding="utf8").read()
 
 
 def test_rule_text_script_is_served():
-    response = web_server.web_server_get_rule_text_script()
+    response = web_server.web_server_frontend_file_response("rule-text.js")
     assert os.path.exists(response.path) and "ruleTextRenderIndicator" in open(response.path, encoding="utf8").read()
 
 
@@ -200,7 +202,7 @@ def test_nothing_else_writes_the_version_number():
     with open(os.path.join(project_paths.PROJECT_DIRECTORY, "version.txt"), encoding="utf8") as version_file:
         version = version_file.read().strip()
     assert re.match(r"^\d+\.\d+\.\d+$", version)
-    for directory in (project_paths.FRONTEND_DIRECTORY, os.path.join(project_paths.PROJECT_DIRECTORY, "stock_benchmark_backend")):
+    for directory in (project_paths.FRONTEND_DIRECTORY, os.path.join(project_paths.PROJECT_DIRECTORY, "backend")):
         for folder, _, name_list in os.walk(directory):
             for name in name_list:
                 path = os.path.join(folder, name)
