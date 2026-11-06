@@ -31,7 +31,7 @@ def main() -> None:
              "One table per entry. After-tax means federal plus California tax, with the wash-sale rule applied. No slippage.", ""]
     charts = sorted(OUT_DIR.glob("chart_*.png"))
     if charts:
-        parts += ["## Price charts", "", "Last year of daily candles with SMA, MACD and ADX. Interactive version: `chart.html` (run `scripts/make_chart.py`).", ""]
+        parts += ["## Price charts", "", "Last year of daily candles with SMA, MACD and ADX. Interactive version: `chart.html` (run `backend/backtest/make_chart.py`).", ""]
         parts += [f"![{p.stem[6:]}]({p.name})" for p in charts] + [""]
     for entry in all_df["entry"].drop_duplicates():
         parts += [f"## {entry}", "", scenario_table(all_df[all_df.entry == entry]), ""]

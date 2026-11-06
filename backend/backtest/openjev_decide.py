@@ -3,8 +3,8 @@
 Run with the MLX environment, not the project Python:
     ~/mlx-env/bin/python scripts/openjev_decide.py
 
-Input : backtest_output/openjev/features.csv  (written by `backtest_openjev.py features`)
-Output: backtest_output/openjev/decisions.json (resumable; a date already in the file is skipped)
+Input : data/runtime/backtest/openjev/features.csv  (written by `python -m backend.backtest openjev features`)
+Output: data/runtime/backtest/openjev/decisions.json (resumable; a date already in the file is skipped)
 
 The model never writes free text. The prompt ends right where the answer starts, and the
 four option words are scored by next-token probability. So the answer is always one of the

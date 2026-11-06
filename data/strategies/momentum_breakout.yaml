@@ -46,7 +46,7 @@ help:
 # ------------------------------------------------------------------------------
 # Gates and rules
 # ------------------------------------------------------------------------------
-# A gate is a group of rules checked together; gates are checked in order. A rule is defined once in config/rules.yaml; here it has only its id,
+# A gate is a group of rules checked together; gates are checked in order. A rule is defined once in data/rules/rules.yaml; here it has only its id,
 # this strategy's weight and an optional veto: true (a failed veto rule fails the whole result). The name after # is the rule_name, for reading.
 # A measure with several lines (VIX, Delta, DTE ...) is listed as several rules; each line the value passes adds its weight.
 gates:

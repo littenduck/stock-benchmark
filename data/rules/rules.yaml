@@ -2,8 +2,8 @@
 # Rule catalog, by theme
 # ------------------------------------------------------------------------------
 # A rule answers one question: does the indicator pass this line? (pass, fail or unknown). It has no weight and no score;
-# a strategy (config/strategies/*.yaml) picks rules from here and gives each its own weight.
-# What is measured, where it comes from and how often it is fetched is written once on the indicator (config/indicators.yaml).
+# a strategy (data/strategies/*.yaml) picks rules from here and gives each its own weight.
+# What is measured, where it comes from and how often it is fetched is written once on the indicator (data/indicators/indicators.yaml).
 # Every text a person reads is {en, zh}; see docs/language.md.
 
 # ------------------------------------------------------------------------------
@@ -24,7 +24,7 @@
 # topic            the topic of its group, from topic_list.
 # description      {en, zh} the pass sentence ("Passes when ..."), with abbreviations spelled out. The meaning, source, update frequency and typical
 #                  values of the measure are on the indicator, which the pages show under the rule.
-# indicator        id of the indicator in config/indicators.yaml (I-003); absent for a manual rule.
+# indicator        id of the indicator in data/indicators/indicators.yaml (I-003); absent for a manual rule.
 # operator, value  the line this rule tests: less_than, less_or_equal, greater_than, greater_or_equal, between (value is [low, high]) or is_true.
 # band_of          optional: id of the main rule when this rule is another line of the same indicator; the lines that share its operator run
 #                  in one direction.

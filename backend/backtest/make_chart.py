@@ -1,6 +1,6 @@
 """Fetch daily OHLCV from Yahoo Finance, compute indicators, and write a Robinhood-style chart page.
 
-Outputs (in backtest_output/):
+Outputs (in data/runtime/backtest/):
   ../data/raw/<SYMBOL>_<interval>.csv   1m, 1h and 1d OHLCV, compact CSV (see save_raw)
   chart.html              interactive candlestick page (TradingView lightweight-charts)
   chart_<SYMBOL>.png      static copy of the last year, for the Markdown report
@@ -8,7 +8,7 @@ Outputs (in backtest_output/):
 Prices: Open/High/Low/Close are split-adjusted but NOT dividend-adjusted, which is what
 Robinhood and TradingView show. (The backtests use Adj Close, a total-return price.)
 
-Run:  python3 scripts/make_chart.py [SYMBOL ...]      default: QQQ TQQQ SOXX SOXL
+Run:  python3 backend/backtest/make_chart.py [SYMBOL ...]      default: QQQ TQQQ SOXX SOXL
 """
 
 from __future__ import annotations

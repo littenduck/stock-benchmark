@@ -2,7 +2,7 @@
 # Indicator catalog
 # ------------------------------------------------------------------------------
 # Every measured quantity the app can use, defined once: what it means, where it comes from, how it is read and how often it is fetched.
-# A rule (config/rules.yaml) points at an indicator by indicator_id and adds the line to test; a strategy (config/strategies/*.yaml) weights rules.
+# A rule (data/rules/rules.yaml) points at an indicator by indicator_id and adds the line to test; a strategy (data/strategies/*.yaml) weights rules.
 # Several rules can share one indicator. Every text a person reads is {en, zh}; see docs/language.md.
 
 # ------------------------------------------------------------------------------
@@ -26,7 +26,7 @@
 # max_age          how old the newest observation may be; past it the value reads unknown. Never shorter than fetch_every.
 #                  fetch_group, fetch_every and max_age are given only to built indicators (a todo one gets them when it is written).
 # display_name, is_higher_value_risky
-#                  only for the indicators on the sidebar (config/settings.yaml lists which): the short name, and whether a rising value is
+#                  only for the indicators on the sidebar (data/settings/benchmark.yaml lists which): the short name, and whether a rising value is
 #                  colored as bad.
 
 # ------------------------------------------------------------------------------
@@ -1235,7 +1235,7 @@ indicator_list:
     max_age: 3d
   - indicator_id: I-084
     indicator_name: "industry_leader_has_no_earnings_inside_option_life"
-    description: {en: "True when the industry leader listed for the stock reports no earnings inside the option's life. The leader's report moves the whole sector. Needs a leader list kept by hand in config/settings.yaml; earnings dates would be the filing dates of 8-K Item 2.02 on SEC EDGAR.", zh: "股票所属行业的龙头在期权存续期内没有财报时为真。龙头的财报会带动整个行业。需要在 config/settings.yaml 里手工维护一份龙头名单；财报日期将用 SEC EDGAR 上 8-K 第 2.02 项的披露日期。"}
+    description: {en: "True when the industry leader listed for the stock reports no earnings inside the option's life. The leader's report moves the whole sector. Needs a leader list kept by hand in data/settings/benchmark.yaml; earnings dates would be the filing dates of 8-K Item 2.02 on SEC EDGAR.", zh: "股票所属行业的龙头在期权存续期内没有财报时为真。龙头的财报会带动整个行业。需要在 data/settings/benchmark.yaml 里手工维护一份龙头名单；财报日期将用 SEC EDGAR 上 8-K 第 2.02 项的披露日期。"}
     scope: symbol
     method: "computed"
     quantifiable: "yes"
@@ -1245,7 +1245,7 @@ indicator_list:
     status: todo
   - indicator_id: I-085
     indicator_name: "customers_and_suppliers_have_no_earnings_inside_option_life"
-    description: {en: "True when the major customers and suppliers listed for the stock report no earnings inside the option's life. Their reports spill over to this company. Needs customer and supplier lists kept by hand in config/settings.yaml; earnings dates would be the filing dates of 8-K Item 2.02 on SEC EDGAR.", zh: "股票的主要客户和供应商在期权存续期内没有财报时为真。它们的财报会外溢到这家公司。需要在 config/settings.yaml 里手工维护客户和供应商名单；财报日期将用 SEC EDGAR 上 8-K 第 2.02 项的披露日期。"}
+    description: {en: "True when the major customers and suppliers listed for the stock report no earnings inside the option's life. Their reports spill over to this company. Needs customer and supplier lists kept by hand in data/settings/benchmark.yaml; earnings dates would be the filing dates of 8-K Item 2.02 on SEC EDGAR.", zh: "股票的主要客户和供应商在期权存续期内没有财报时为真。它们的财报会外溢到这家公司。需要在 data/settings/benchmark.yaml 里手工维护客户和供应商名单；财报日期将用 SEC EDGAR 上 8-K 第 2.02 项的披露日期。"}
     scope: symbol
     method: "computed"
     quantifiable: "yes"
@@ -1255,7 +1255,7 @@ indicator_list:
     status: todo
   - indicator_id: I-086
     indicator_name: "no_fomc_meeting_inside_option_life"
-    description: {en: "True when no FOMC (Federal Open Market Committee, the Fed committee that sets US interest rates) meeting day falls between today and the option's expiration. Volatility rises around the meeting. Source: the Fed's published calendar at federalreserve.gov, written into config/settings.yaml by hand (through 2027; the 2027 dates are tentative); it reads unknown past the last date.", zh: "从今天到期权到期之间，没有 FOMC（联邦公开市场委员会，制定美国利率的美联储委员会）会议日时为真。会议前后波动会上升。数据来源：美联储在 federalreserve.gov 公布的日程，手工写进 config/settings.yaml（到 2027 年；2027 年的日期是暂定的）；超过最后一个日期读“未知”。"}
+    description: {en: "True when no FOMC (Federal Open Market Committee, the Fed committee that sets US interest rates) meeting day falls between today and the option's expiration. Volatility rises around the meeting. Source: the Fed's published calendar at federalreserve.gov, written into data/settings/benchmark.yaml by hand (through 2027; the 2027 dates are tentative); it reads unknown past the last date.", zh: "从今天到期权到期之间，没有 FOMC（联邦公开市场委员会，制定美国利率的美联储委员会）会议日时为真。会议前后波动会上升。数据来源：美联储在 federalreserve.gov 公布的日程，手工写进 data/settings/benchmark.yaml（到 2027 年；2027 年的日期是暂定的）；超过最后一个日期读“未知”。"}
     scope: window
     method: "scrape"
     quantifiable: "yes"
@@ -1268,7 +1268,7 @@ indicator_list:
     max_age: 2d
   - indicator_id: I-087
     indicator_name: "no_cpi_or_pce_release_inside_option_life"
-    description: {en: "True when no CPI (Consumer Price Index) or PCE (Personal Consumption Expenditures price index) inflation release falls between today and the option's expiration. Release days move markets. Source: the release dates of the BLS (CPI) and the BEA (PCE) written into config/settings.yaml by hand (CPI through 2027, PCE through 2026); it reads unknown past the last date.", zh: "从今天到期权到期之间，没有 CPI（消费者价格指数）或 PCE（个人消费支出价格指数）通胀数据公布时为真。公布日会带动市场。数据来源：BLS（CPI）和 BEA（PCE）公布的日程，手工写进 config/settings.yaml（CPI 到 2027 年，PCE 到 2026 年）；超过最后一个日期读“未知”。"}
+    description: {en: "True when no CPI (Consumer Price Index) or PCE (Personal Consumption Expenditures price index) inflation release falls between today and the option's expiration. Release days move markets. Source: the release dates of the BLS (CPI) and the BEA (PCE) written into data/settings/benchmark.yaml by hand (CPI through 2027, PCE through 2026); it reads unknown past the last date.", zh: "从今天到期权到期之间，没有 CPI（消费者价格指数）或 PCE（个人消费支出价格指数）通胀数据公布时为真。公布日会带动市场。数据来源：BLS（CPI）和 BEA（PCE）公布的日程，手工写进 data/settings/benchmark.yaml（CPI 到 2027 年，PCE 到 2026 年）；超过最后一个日期读“未知”。"}
     scope: window
     method: "computed"
     quantifiable: "yes"
@@ -1281,7 +1281,7 @@ indicator_list:
     max_age: 2d
   - indicator_id: I-088
     indicator_name: "no_jobs_report_within_one_day"
-    description: {en: "True when the monthly jobs report (nonfarm payrolls, the number of jobs added, usually released on the first Friday of the month) is not due yesterday, today or tomorrow. Surprises cause gaps. Source: the BLS schedule written into config/settings.yaml by hand (through 2027); it reads unknown past the last date.", zh: "月度非农就业报告（新增非农就业人数，通常在每月第一个周五公布）不在昨天、今天或明天时为真。数据意外会引起跳空。数据来源：BLS 公布的日程，手工写进 config/settings.yaml（到 2027 年）；超过最后一个日期读“未知”。"}
+    description: {en: "True when the monthly jobs report (nonfarm payrolls, the number of jobs added, usually released on the first Friday of the month) is not due yesterday, today or tomorrow. Surprises cause gaps. Source: the BLS schedule written into data/settings/benchmark.yaml by hand (through 2027); it reads unknown past the last date.", zh: "月度非农就业报告（新增非农就业人数，通常在每月第一个周五公布）不在昨天、今天或明天时为真。数据意外会引起跳空。数据来源：BLS 公布的日程，手工写进 data/settings/benchmark.yaml（到 2027 年）；超过最后一个日期读“未知”。"}
     scope: market
     method: "computed"
     quantifiable: "yes"
@@ -1408,7 +1408,7 @@ indicator_list:
     max_age: 4d
   - indicator_id: I-097
     indicator_name: "selected_put_bid_ask_spread_percent_of_mid"
-    description: {en: "The bid-ask spread (the gap between the best buy and sell quotes) of the selected put (the out-of-the-money put whose Delta is closest to the target Delta of config/settings.yaml, in each expiration window) as a percent of its mid price (the average of the two). A wide spread means a high real trading cost; for cheap options also check the dollar gap. Source: Yahoo Finance option chain via yfinance; it needs a live bid and ask, which are often 0 when the market is closed.", zh: "所选的 Put（每个到期窗口里 Delta 最接近 config/settings.yaml 目标 Delta 的虚值 Put）的买卖价差（最优买价与卖价的差距）占中间价（两者的平均）的百分比。价差越大，实际成交成本越高；便宜的期权还要看绝对金额的差距。数据来源：通过 yfinance 取 Yahoo Finance 的期权链；需要有效的买价和卖价，休市时它们常为 0。"}
+    description: {en: "The bid-ask spread (the gap between the best buy and sell quotes) of the selected put (the out-of-the-money put whose Delta is closest to the target Delta of data/settings/benchmark.yaml, in each expiration window) as a percent of its mid price (the average of the two). A wide spread means a high real trading cost; for cheap options also check the dollar gap. Source: Yahoo Finance option chain via yfinance; it needs a live bid and ask, which are often 0 when the market is closed.", zh: "所选的 Put（每个到期窗口里 Delta 最接近 data/settings/benchmark.yaml 目标 Delta 的虚值 Put）的买卖价差（最优买价与卖价的差距）占中间价（两者的平均）的百分比。价差越大，实际成交成本越高；便宜的期权还要看绝对金额的差距。数据来源：通过 yfinance 取 Yahoo Finance 的期权链；需要有效的买价和卖价，休市时它们常为 0。"}
     unit: "%"
     scope: window
     method: "computed"
