@@ -9,8 +9,7 @@ Layout: three top-level folders. `frontend/` is the pages, `backend/` is the Pyt
 ```mermaid
 flowchart TB
     subgraph L1["Frontend"]
-        direction LR
-        F["frontend/"]
+        F["frontend/ pages"]
     end
     subgraph L2["Backend"]
         direction LR
@@ -18,7 +17,14 @@ flowchart TB
     end
     subgraph L3["Data"]
         direction LR
-        C["data/strategies/ data/symbols/ data/indicators/ data/rules/ data/settings/"] --- R["data/runtime/"]
+        C["data/strategies/ symbols/ indicators/ rules/ settings/"] --- R["data/runtime/ (generated)"]
+    end
+    subgraph L4["Other folders"]
+        direction LR
+        SC["scripts/ dev tools"]
+        TE["tests/ pytest"]
+        DO["docs/ documentation"]
+        LI["licenses/ third-party notices"]
     end
 
     L1 --> L2 --> L3
@@ -59,6 +65,8 @@ Open http://localhost:8000. Data refreshes in the background while the US market
 | Page design | `docs/design.md` |
 | JSON API | `docs/api.md` |
 | Deployment | `docs/deployment.md` |
+| Dev tools (icons, golden tests, one-off analysis) | `scripts/` |
+| Tests | `tests/` |
 
 Restart the server after changing any YAML file.
 
