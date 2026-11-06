@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stock Benchmark · Interactive layout</title>
+<script>
+  // Theme: #day or #night in the URL wins, then the saved choice, then the system setting.
+  (function () {
+    var t = null;
+    if (location.hash === "#day") t = "light";
+    if (location.hash === "#night") t = "dark";
+    try { if (!t) t = localStorage.getItem("sb-theme"); } catch (e) {}
+    if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+<style>
+  /* Day: warm light tokens from frontend/base.css */
+  :root {
+    --bg: #FAF9F5; --card: #FFFFFF; --card2: #F0EEE6; --line: #E8E6DC; --line2: #D8D5C8; --ink: #141413; --soft: #6B6A64; --text2: #3D3C38;
+    --pos: #146C35; --neg: #B42318; --accent: #C96442; --tier: #E8E6DC; --chart-bg: #F4F2EC; --grid: #E8E6DC;
+    --logo: #F0EEE6; --live-bg: rgba(20,108,53,.10); --live-line: rgba(20,108,53,.35); --on-bg: #E8E6DC; --chip-on: #F0EEE6;
+    --hover-line: #B9B5A6; --smc-bg: #FFFFFF; --smc-line: #D8D5C8;
+    --tag-chart-bg: rgba(201,100,66,.14); --tag-chart-ink: #A8502F; --tag-ind-bg: rgba(107,106,100,.14); --tag-ind-ink: #4A4944;
+    color-scheme: light;
+  }
+  /* Night: dark tokens from frontend/base.css */
+  :root[data-theme="dark"] {
+    --bg: #262624; --card: #30302E; --card2: #3A3A37; --line: #3D3D3A; --line2: #4A4A46; --ink: #F5F4EE; --soft: #A8A69D; --text2: #D8D6CE;
+    --pos: #4ADE80; --neg: #FF8A8A; --accent: #D97757; --tier: #3D3D3A; --chart-bg: #2B2B29; --grid: #3D3D3A;
+    --logo: #3A3A37; --live-bg: rgba(74,222,128,.12); --live-line: rgba(74,222,128,.35); --on-bg: #3A3A37; --chip-on: #3A3A37;
+    --hover-line: #5A5A54; --smc-bg: #262624; --smc-line: #4A4A46;
+    --tag-chart-bg: rgba(217,119,87,.18); --tag-chart-ink: #E9A088; --tag-ind-bg: rgba(168,166,157,.18); --tag-ind-ink: #C9C6BC;
+    color-scheme: dark;
+  }
+  .themebtn { margin-left: 6px; width: 34px; height: 30px; border-radius: 8px; border: 1px solid var(--line); color: var(--soft); font-size: 14px; display: grid; place-items: center; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: Inter, -apple-system, system-ui, sans-serif; font-variant-numeric: tabular-nums; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+  .app { min-height: 100%; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 12px; }
+  .app > *, .main { min-width: 0; }
+  .toolbar { display: flex; gap: 6px 8px; flex-wrap: wrap; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; }
+  .sec { font-size: 12px; font-weight: 600; color: var(--soft); text-transform: uppercase; letter-spacing: .08em; display: flex; justify-content: space-between; align-items: center; }
+
+  /* sidebar: hidden on mobile, left column on desktop */
+  .side { display: none; }
+  .symbol-select { display: block; width: 100%; background: var(--card2); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font: inherit; }
+
+  /* header */
+  .head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .logo { width: 34px; height: 34px; border-radius: 10px; background: var(--logo); border: 1px solid var(--line); display: grid; place-items: center; font-weight: 700; font-size: 12px; }
+  .ticker { font-size: 20px; font-weight: 700; }
+  .sub { font-size: 11px; color: var(--soft); }
+  .price { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+  .delta { font-size: 13px; font-weight: 600; }
+  .live { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--pos); background: var(--live-bg); border: 1px solid var(--live-line); padding: 4px 10px; border-radius: 999px; cursor: pointer; }
+  .live.off { color: var(--soft); background: none; border-color: var(--line); }
+  .up { color: var(--pos); } .down { color: var(--neg); }
+
+  /* chart */
+  .chart { padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+  .toolbar { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+  .tf button { font-size: 11px; color: var(--soft); padding: 4px 8px; border-radius: 6px; }
+  .tf button.on { background: var(--on-bg); color: var(--ink); }
+  .smc-toggles { margin-left: auto; display: flex; gap: 4px; flex-wrap: wrap; }
+  .smc-toggles button { font-size: 10px; font-weight: 700; padding: 3px 7px; border-radius: 5px; border: 1px solid var(--line); color: var(--soft); }
+  .smc-toggles button.on { color: var(--ink); border-color: var(--hover-line); background: var(--chip-on); }
+  .canvas { position: relative; flex: 1; min-height: 0; background: var(--chart-bg); border-radius: 10px; overflow: hidden; }
+  .canvas svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .smc { position: absolute; transform: translate(-50%, -50%); font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 5px; background: var(--smc-bg); border: 1px solid var(--smc-line); white-space: nowrap; pointer-events: none; }
+
+  /* indicators */
+  .inds { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ind { position: relative; text-align: left; background: var(--card2); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .ind:hover, .ind.on { border-color: var(--hover-line); }
+  .ind-top { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 3px; flex: none; }
+  .ind-name { font-size: 12px; font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .q { width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--line2); color: var(--soft); font-size: 9px; display: grid; place-items: center; flex: none; }
+  .ind-val { font-size: 18px; font-weight: 700; }
+  .ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
+  .ladder i { height: 5px; border-radius: 3px; background: var(--tier); }
+  .ladder i.on { background: var(--c); }
+  .tier { font-size: 10px; color: var(--soft); }
+  .rule { display: none; margin-top: 4px; font-size: 10px; color: var(--text2); line-height: 1.4; }
+  .ind.on .rule { display: block; }
+
+  /* log */
+  .log { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+  .filters { display: flex; gap: 4px; }
+  .filters button { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; color: var(--soft); border: 1px solid var(--line); }
+  .filters button.on { color: var(--ink); background: var(--chip-on); border-color: var(--hover-line); }
+  .rows { display: flex; flex-direction: column; gap: 6px; overflow: auto; min-height: 0; }
+  .row { display: grid; grid-template-columns: 44px 58px 1fr; align-items: center; gap: 8px; font-size: 12px; }
+  .row .t { color: var(--soft); }
+  .tag { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 5px; text-align: center; }
+  .tag.chart { background: var(--tag-chart-bg); color: var(--tag-chart-ink); }
+  .tag.ind { background: var(--tag-ind-bg); color: var(--tag-ind-ink); }
+  .row .msg { color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ---------- MOBILE (below 900px): option 4 ---------- */
+  .top { display: flex; flex-direction: column; gap: 6px; }
+  @media (max-width: 899px) {
+    .app { max-width: 430px; margin: 0 auto; }
+    .chart { height: 260px; }
+    .log { max-height: 260px; }
+    .log .rows { max-height: 180px; }
+  }
+
+  /* ---------- DESKTOP (900px and up): option 3 ---------- */
+  @media (min-width: 900px) {
+    html, body { height: 100%; overflow: hidden; }
+    .app { height: 100vh; grid-template-columns: 260px 1fr; grid-template-rows: auto 1fr; }
+    .side { display: flex; flex-direction: column; gap: 10px; grid-row: 1 / span 2; padding: 14px; }
+    .side .brand { font-size: 16px; font-weight: 700; }
+    .side .wl button { display: block; width: 100%; text-align: left; padding: 9px 10px; border-radius: 10px; font-size: 13px; color: var(--text2); }
+    .side .wl button.on { background: var(--card2); color: var(--ink); border: 1px solid var(--line2); }
+    .side .wl button:hover { background: var(--card2); }
+    .side .foot { margin-top: auto; font-size: 11px; color: var(--soft); }
+    .side .card { padding: 12px; }
+    .symbol-select { display: none; }
+    .main { display: flex; flex-direction: column; gap: 12px; min-height: 0; grid-column: 2; grid-row: 1 / span 2; }
+    .head-row { display: flex; align-items: center; gap: 12px; }
+    .strip { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+    .strip .ind { padding: 8px; }
+    .strip .ind-val { font-size: 16px; }
+    .chart { flex: 1; min-height: 0; }
+    .log { flex: none; height: 210px; }
+    .log .rows { flex: 1; }
+    .inds .grid { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+    .inds .ind-name { font-size: 11px; }
+  }
+  @media (max-width: 899px) { .strip-only, .side { display: none; } .strip-only { display: none; } }
+  @media (min-width: 900px) { .grid-only { display: none; } }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- Sidebar: symbol list (desktop only) -->
+  <aside class="side card">
+    <div class="brand">Stock Benchmark</div>
+    <div class="wl" id="wl"></div>
+    <div class="foot">Indicators: 8 active · Settings</div>
+  </aside>
+
+  <div class="main">
+    <!-- Header: symbol, price, live toggle. On mobile a symbol picker sits above it. -->
+    <section class="card" style="padding:12px">
+      <select class="symbol-select" id="symSelect" aria-label="Symbol"></select>
+      <div class="head" style="margin-top:8px">
+        <div class="logo" id="logo">QQQ</div>
+        <div>
+          <div class="ticker" id="ticker">QQQ</div>
+          <div class="sub" id="company">Invesco QQQ Trust</div>
+        </div>
+        <button class="live" id="liveBtn" title="Simulate live updates">● LIVE</button>
+        <button class="themebtn" id="themeBtn" title="Switch day and night">◐</button>
+      </div>
+      <div class="head" style="margin-top:6px">
+        <div class="price" id="price">$0.00</div>
+        <div class="delta" id="delta">+0.00%</div>
+      </div>
+    </section>
+
+    <!-- Chart: TradingView-style candles with SMC labels -->
+    <section class="card chart" id="chartCard">
+      <div class="toolbar">
+        <div class="tf" id="tf"></div>
+        <div class="smc-toggles" id="smcToggles"></div>
+      </div>
+      <div class="canvas" id="canvas">
+        <svg id="svg" preserveAspectRatio="none"></svg>
+      </div>
+    </section>
+
+    <!-- Indicators: 2x4 grid on mobile, one strip of 8 on desktop -->
+    <section class="card inds" id="indsCard">
+      <div class="sec"><span>Indicators</span><span>tap ?</span></div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <!-- Log: CHART events and IND changes -->
+    <section class="card log" id="logCard">
+      <div class="sec" style="gap:8px"><span>Log · last 24h</span>
+        <div class="filters" id="filters"></div>
+      </div>
+      <div class="rows" id="rows"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+// ---- mock data (replace with real API later) ----
+const TIERS = ["Good", "OK", "Weak", "Bad"];
+const TIER_COL = ["#22c55e", "#facc15", "#f59e0b", "#f87171"];
+const IND_DEF = [
+  { name: "PE", rule: "< 20 Good · 20–30 OK · 30–40 Weak · > 40 Bad", col: "#f87171" },
+  { name: "FCF yield", rule: "> 6% Good · 4–6% OK · 2–4% Weak · < 2% Bad", col: "#fb923c" },
+  { name: "RSI", rule: "30–50 Good · 50–70 OK · 70–80 Weak · > 80 Bad", col: "#facc15" },
+  { name: "MACD", rule: "Above signal Good · flat OK · below Weak · falling Bad", col: "#4ade80" },
+  { name: "Trend", rule: "Up Good · sideways OK · down Weak · strong down Bad", col: "#22d3ee" },
+  { name: "Volume", rule: "> 1.2x Good · 0.9–1.2x OK · 0.6–0.9x Weak · < 0.6x Bad", col: "#60a5fa" },
+  { name: "ATR", rule: "< 1.5% Good · 1.5–2.5% OK · 2.5–4% Weak · > 4% Bad", col: "#a78bfa" },
+  { name: "Short int", rule: "< 5% Good · 5–10% OK · 10–15% Weak · > 15% Bad", col: "#f472b6" },
+];
+const SYMS = {
+  QQQ:  { company: "Invesco QQQ Trust", price: 653.08, chg: -4.52, vals: ["25.0","4.1%","62","+0.8","Up","0.9x","1.6%","12%"], tiers: [2,0,1,0,0,2,1,0] },
+  AAPL: { company: "Apple Inc.", price: 231.10, chg: 0.84, vals: ["31.2","3.2%","54","+0.3","Up","1.1x","1.9%","4%"], tiers: [2,1,1,0,0,1,1,0] },
+  MSFT: { company: "Microsoft Corp.", price: 421.75, chg: 1.12, vals: ["28.4","3.8%","58","+0.6","Up","1.0x","1.4%","3%"], tiers: [2,1,1,0,0,1,0,0] },
+  NVDA: { company: "NVIDIA Corp.", price: 182.40, chg: 2.31, vals: ["44.1","2.1%","73","+1.2","Up","1.4x","3.1%","2%"], tiers: [3,2,2,0,0,0,2,0] },
+  TSLA: { company: "Tesla Inc.", price: 248.92, chg: -2.07, vals: ["62.5","1.2%","34","-0.9","Down","0.7x","4.6%","18%"], tiers: [3,3,0,3,2,2,3,3] },
+  AMZN: { company: "Amazon.com Inc.", price: 205.60, chg: 0.42, vals: ["36.8","3.5%","56","+0.2","Up","1.0x","1.8%","6%"], tiers: [2,1,1,0,0,1,1,1] },
+};
+const TF = ["1m", "5m", "15m", "1H", "4H", "1D"];
+const SMC = [
+  { t: "BOS", c: "#60a5fa", x: 0.12, y: 0.22 },
+  { t: "CHoCH", c: "#f59e0b", x: 0.45, y: 0.36 },
+  { t: "OB", c: "#22c55e", x: 0.7, y: 0.56 },
+  { t: "FVG", c: "#a78bfa", x: 0.22, y: 0.68 },
+  { t: "Liquidity", c: "#22d3ee", x: 0.58, y: 0.82 },
+];
+const LOG = [
+  ["10:32", "chart", "BOS up · 1H"], ["10:41", "ind", "PE 25.0 → Weak"], ["11:05", "chart", "CHoCH down · 4H"], ["11:20", "ind", "RSI 62 → OK"],
+  ["11:48", "chart", "OB retest · 1H"], ["11:52", "ind", "Trend Up → Good"], ["12:10", "chart", "FVG filled · 1H"], ["12:25", "ind", "Volume 0.9x → Weak"],
+];
+
+// ---- state ----
+let state = { sym: "QQQ", tf: "1H", smc: new Set(SMC.map(s => s.t)), filter: "all", live: true, open: null, log: [...LOG] };
+
+// ---- seeded candles ----
+function candles(seedStr, base, n) {
+  let s = 0; for (const ch of seedStr) s = (s * 31 + ch.charCodeAt(0)) >>> 0;
+  const rnd = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+  let p = base, out = [];
+  for (let i = 0; i < n; i++) {
+    const o = p, c = o + (rnd() - 0.45) * base * 0.01;
+    out.push({ o, c, hi: Math.max(o, c) + rnd() * base * 0.004, lo: Math.min(o, c) - rnd() * base * 0.004 });
+    p = c;
+  }
+  return out;
+}
+
+// ---- render: symbol list / selects ----
+function renderSymbols() {
+  const names = Object.keys(SYMS);
+  document.getElementById("wl").innerHTML = names.map(s =>
+    `<button class="${s === state.sym ? "on" : ""}" data-sym="${s}">${s}</button>`).join("");
+  document.getElementById("symSelect").innerHTML = names.map(s =>
+    `<option value="${s}" ${s === state.sym ? "selected" : ""}>${s} · ${SYMS[s].company}</option>`).join("");
+}
+
+// ---- render: header ----
+function renderHead() {
+  const d = SYMS[state.sym];
+  const chg = d.chg;
+  document.getElementById("logo").textContent = state.sym.slice(0, 3);
+  document.getElementById("ticker").textContent = state.sym;
+  document.getElementById("company").textContent = d.company;
+  document.getElementById("price").textContent = "$" + d.price.toFixed(2);
+  const dl = document.getElementById("delta");
+  dl.textContent = (chg >= 0 ? "+" : "") + chg.toFixed(2) + "%";
+  dl.className = "delta " + (chg >= 0 ? "up" : "down");
+  const lb = document.getElementById("liveBtn");
+  lb.textContent = state.live ? "● LIVE" : "○ PAUSED";
+  lb.className = "live" + (state.live ? "" : " off");
+}
+
+// ---- render: timeframes and SMC toggles ----
+function renderToolbar() {
+  document.getElementById("tf").innerHTML = TF.map(t =>
+    `<button class="${t === state.tf ? "on" : ""}" data-tf="${t}">${t}</button>`).join("");
+  document.getElementById("smcToggles").innerHTML = SMC.map(s =>
+    `<button class="${state.smc.has(s.t) ? "on" : ""}" data-smc="${s.t}">${s.t}</button>`).join("");
+}
+
+// ---- render: chart ----
+function renderChart() {
+  const d = SYMS[state.sym];
+  const canvas = document.getElementById("canvas");
+  const W = canvas.clientWidth || 340, H = canvas.clientHeight || 200;
+  const data = candles(state.sym + state.tf, d.price, 60);
+  const all = data.flatMap(c => [c.hi, c.lo]);
+  const min = Math.min(...all), max = Math.max(...all);
+  const y = v => 10 + (1 - (v - min) / (max - min)) * (H - 20);
+  const cw = W / data.length;
+  let s = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">`;
+  for (let g = 1; g < 5; g++) s += `<line x1="0" x2="${W}" y1="${H * g / 5}" y2="${H * g / 5}" style="stroke:var(--grid)"/>`;
+  data.forEach((c, i) => {
+    const up = c.c >= c.o, col = up ? "var(--pos)" : "var(--neg)", x = i * cw + cw / 2;
+    s += `<line x1="${x}" x2="${x}" y1="${y(c.hi)}" y2="${y(c.lo)}" style="stroke:${col}"/>`;
+    const top = y(Math.max(c.o, c.c)), bot = y(Math.min(c.o, c.c));
+    s += `<rect x="${x - cw * 0.3}" y="${top}" width="${cw * 0.6}" height="${Math.max(1.5, bot - top)}" style="fill:${col}"/>`;
+  });
+  s += `</svg>`;
+  const wrap = document.getElementById("canvas");
+  wrap.innerHTML = s;
+  SMC.filter(x => state.smc.has(x.t)).forEach(x => {
+    const el = document.createElement("div");
+    el.className = "smc";
+    el.textContent = x.t;
+    el.style.left = (x.x * 100) + "%";
+    el.style.top = (x.y * 100) + "%";
+    el.style.borderColor = x.c;
+    el.style.color = x.c;
+    wrap.appendChild(el);
+  });
+}
+
+// ---- render: indicators (8 tiles) ----
+function renderInds() {
+  const d = SYMS[state.sym];
+  document.getElementById("grid").innerHTML = IND_DEF.map((ind, i) => {
+    const t = d.tiers[i];
+    return `
+    <button class="ind ${state.open === i ? "on" : ""}" data-ind="${i}" style="--c:${TIER_COL[t]}">
+      <div class="ind-top"><span class="dot" style="background:${ind.col}"></span><span class="ind-name">${ind.name}</span><span class="q">?</span></div>
+      <div class="ind-val">${d.vals[i]}</div>
+      <div class="ladder">${[0,1,2,3].map(k => `<i class="${k === t ? "on" : ""}"></i>`).join("")}</div>
+      <div class="tier">${TIERS[t]}</div>
+      <div class="rule">${ind.rule}</div>
+    </button>`;
+  }).join("");
+}
+
+// ---- render: log ----
+function renderLog() {
+  const f = document.getElementById("filters");
+  f.innerHTML = ["all", "chart", "ind"].map(k =>
+    `<button class="${state.filter === k ? "on" : ""}" data-f="${k}">${k === "all" ? "ALL" : k === "chart" ? "CHART" : "IND"}</button>`).join("");
+  const rows = state.log.filter(r => state.filter === "all" || r[1] === state.filter).slice(-12).reverse();
+  document.getElementById("rows").innerHTML = rows.map(([t, tag, msg]) =>
+    `<div class="row"><span class="t">${t}</span><span class="tag ${tag}">${tag === "chart" ? "CHART" : "IND"}</span><span class="msg">${msg}</span></div>`).join("");
+}
+
+function renderAll() { renderSymbols(); renderHead(); renderToolbar(); renderChart(); renderInds(); renderLog(); }
+
+// ---- events ----
+document.addEventListener("click", e => {
+  const sym = e.target.closest("[data-sym]");
+  if (sym) { state.sym = sym.dataset.sym; state.open = null; return renderAll(); }
+  const tf = e.target.closest("[data-tf]");
+  if (tf) { state.tf = tf.dataset.tf; return renderAll(); }
+  const smc = e.target.closest("[data-smc]");
+  if (smc) {
+    const k = smc.dataset.smc;
+    state.smc.has(k) ? state.smc.delete(k) : state.smc.add(k);
+    return renderAll();
+  }
+  const ind = e.target.closest("[data-ind]");
+  if (ind) { const i = +ind.dataset.ind; state.open = state.open === i ? null : i; return renderInds(); }
+  const f = e.target.closest("[data-f]");
+  if (f) { state.filter = f.dataset.f; return renderLog(); }
+  if (e.target.closest("#liveBtn")) { state.live = !state.live; return renderHead(); }
+  if (e.target.closest("#themeBtn")) {
+    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem("sb-theme", next); } catch (err) {}
+    return renderChart();
+  }
+});
+document.getElementById("symSelect").addEventListener("change", e => { state.sym = e.target.value; state.open = null; renderAll(); });
+window.addEventListener("resize", () => renderChart());
+
+// ---- simulated live updates (replace with a real feed) ----
+setInterval(() => {
+  if (!state.live) return;
+  const d = SYMS[state.sym];
+  const step = (Math.random() - 0.5) * d.price * 0.0008;
+  d.price = Math.max(1, d.price + step);
+  d.chg = d.chg + step / d.price * 100 * 0.2;
+  renderHead();
+  renderChart();
+}, 1500);
+
+renderAll();
+</script>
+</body>
+</html>
