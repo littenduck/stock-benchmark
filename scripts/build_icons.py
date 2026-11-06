@@ -1,4 +1,4 @@
-"""Build static/icons.svg from the official Tabler Icons package in node_modules.
+"""Build frontend/icons.svg from the official Tabler Icons package in node_modules.
 
 Every icon's paths are copied unchanged from node_modules/@tabler/icons. The only
 change is the stroke width of outline icons, set so they render at 1.5px in a 16px box.
@@ -10,8 +10,8 @@ import shutil
 
 PROJECT_DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TABLER_DIRECTORY = os.path.join(PROJECT_DIRECTORY, "node_modules", "@tabler", "icons")
-OUTPUT_SPRITE_PATH = os.path.join(PROJECT_DIRECTORY, "static", "icons.svg")
-OUTPUT_FAVICON_PATH = os.path.join(PROJECT_DIRECTORY, "static", "favicon.svg")
+OUTPUT_SPRITE_PATH = os.path.join(PROJECT_DIRECTORY, "frontend", "icons.svg")
+OUTPUT_FAVICON_PATH = os.path.join(PROJECT_DIRECTORY, "frontend", "favicon.svg")
 LICENSE_OUTPUT_PATH = os.path.join(PROJECT_DIRECTORY, "licenses", "tabler-icons-LICENSE.txt")
 ACCENT_COLOR = "#C96442"
 # 1.5px rendered in a 16px box means 1.5 * 24 / 16 = 2.25 units in Tabler's 24-unit viewBox.

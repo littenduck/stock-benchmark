@@ -4,10 +4,12 @@ import os
 import pandas
 import pytest
 
-from stock_benchmark_backend import indicator_calculation as I
-from stock_benchmark_backend import indicator_registry
-from stock_benchmark_backend.settings_loader import PROJECT_DIRECTORY
-from stock_benchmark_backend import live_indicators, history_series, option_chain
+from backend.benchmark import indicator_calculation as I
+from backend.benchmark import indicator_registry
+from backend.shared import project_paths
+from backend.benchmark import live_indicators
+from backend.benchmark import history_series
+from backend.benchmark import option_chain
 
 
 def test_the_newest_value_of_a_series_comes_with_the_time_it_was_observed():
@@ -20,7 +22,7 @@ def test_the_newest_value_of_a_series_comes_with_the_time_it_was_observed():
 
 
 def test_every_series_indicator_of_the_registry_has_a_builder_and_every_edgar_one_is_produced():
-    registry = indicator_registry.indicator_registry_load_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "indicators.yaml"))
+    registry = indicator_registry.indicator_registry_load_from_yaml_file(project_paths.INDICATOR_FILE_PATH)
     for indicator in registry.indicator_by_name.values():
         if indicator.fetch_group in live_indicators.SERIES_GROUP_ID_LIST and indicator.status == "built" \
                 and indicator.indicator_name not in live_indicators.MADE_WITH_PRICE_FIGURES_INDICATOR_NAME_SET:
@@ -112,7 +114,7 @@ def test_put_skew_compares_the_ten_percent_otm_put_with_the_money_put():
 
 
 def test_dolthub_history_gives_a_percentile_and_a_one_month_ratio():
-    from stock_benchmark_backend import dolthub_data
+    from backend.benchmark import dolthub_data
     days = pandas.date_range(end="2026-10-23", periods=260, freq="B")
     series = pandas.Series([0.20 + 0.001 * index for index in range(260)], index=days)  # rising: today is the highest of the year
     value = dolthub_data.dolthub_data_build_indicator_value_by_name(series, datetime.date(2026, 10, 25))
@@ -123,7 +125,7 @@ def test_dolthub_history_gives_a_percentile_and_a_one_month_ratio():
 
 
 def test_dolthub_rows_and_symbol_check():
-    from stock_benchmark_backend import dolthub_data
+    from backend.benchmark import dolthub_data
     rows = [{"date": "2026-10-22", "iv_current": "0.27"}, {"date": "2026-10-21", "iv_current": None}, {"date": "2026-10-20", "iv_current": "0.25"}]
     assert dolthub_data.dolthub_data_parse_history_rows(rows).tolist() == [0.25, 0.27]
     assert "act_symbol='AAPL'" in dolthub_data.dolthub_data_build_history_query("AAPL", datetime.date(2026, 10, 25))

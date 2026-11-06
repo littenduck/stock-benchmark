@@ -1,6 +1,8 @@
 import types
 
-from stock_benchmark_backend import refresh_scheduler, snapshot_storage
+from backend.shared import project_paths
+from backend.benchmark import refresh_scheduler
+from backend.benchmark import snapshot_storage
 
 
 def build_snapshot(symbol_list, failed_symbol_list=()):
@@ -24,8 +26,9 @@ def test_a_symbol_that_failed_still_counts_as_followed(monkeypatch):
 
 
 def test_the_dolthub_iv_history_is_off_by_default_and_has_a_short_timeout():
-    from stock_benchmark_backend import dolthub_data, settings_loader
+    from backend.benchmark import dolthub_data
+    from backend.benchmark import settings_loader
     import os
-    settings = settings_loader.settings_loader_load_settings_from_yaml_file(os.path.join(settings_loader.PROJECT_DIRECTORY, "config", "settings.yaml"))
+    settings = settings_loader.settings_loader_load_settings_from_yaml_file(project_paths.SETTINGS_FILE_PATH)
     assert settings.fetch_dolthub_iv_history is False
     assert dolthub_data.DOLTHUB_TIMEOUT_SECONDS * dolthub_data.ATTEMPT_COUNT <= 60

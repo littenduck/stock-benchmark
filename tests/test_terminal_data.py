@@ -5,7 +5,8 @@ import pytest
 from fastapi.testclient import TestClient
 from fastapi import HTTPException
 
-from stock_benchmark_backend import terminal_data, web_server
+from backend.benchmark import terminal_data
+from backend.app import web_server
 
 
 def _bars(count=260):

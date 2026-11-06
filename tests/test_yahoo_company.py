@@ -3,7 +3,8 @@ import datetime
 import pandas
 import pytest
 
-from stock_benchmark_backend import company_indicators, yahoo_company
+from backend.benchmark import company_indicators
+from backend.benchmark import yahoo_company
 
 RAW = {
     "price": {"marketCap": {"raw": 5e12, "fmt": "5T"}, "symbol": "AAPL", "longName": "Apple"},

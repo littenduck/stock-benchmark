@@ -2,7 +2,8 @@ import os
 import pandas
 import pytest
 
-from stock_benchmark_backend import edgar_data, fundamental_series
+from backend.benchmark import edgar_data
+from backend.benchmark import fundamental_series
 
 
 def fact(start, end, val, filed, form):
@@ -88,7 +89,7 @@ def test_fetch_json_sends_the_identity_through_edgartools(monkeypatch):
 
 
 def test_every_sec_override_name_is_a_column_of_the_company_table():
-    from stock_benchmark_backend import live_indicators
+    from backend.benchmark import live_indicators
     days = pandas.date_range("2020-01-01", periods=3, freq="D")
     columns = set(fundamental_series.fundamental_series_build_table({"facts": {}}, days, pandas.Series(1.0, index=days)).columns)
     assert set(live_indicators.EDGAR_INDICATOR_NAME_LIST) <= columns

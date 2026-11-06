@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from stock_benchmark_backend import technical_indicators as ti
+from backend.benchmark import technical_indicators as ti
 
 
 def test_sma_is_the_plain_mean_of_the_window_and_none_before_it():

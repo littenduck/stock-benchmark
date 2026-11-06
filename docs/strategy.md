@@ -1,6 +1,6 @@
 # Strategy
 
-A strategy is one YAML file in `config/strategies/`. The app loads every file in that folder at startup and refuses to start if a rule refers to an unknown indicator.
+A strategy is one YAML file in `data/strategies/`. The app loads every file in that folder at startup and refuses to start if a rule refers to an unknown indicator.
 
 > **Status (branch `refactor/rule-catalog-by-theme`):** the catalog, the four strategy files, the loader, the evaluator, the API (`schema_version` 4) and the two pages all use the new design: theme-based ids, one rule per tier line, weights and veto flags in the strategy files.
 
@@ -27,15 +27,15 @@ gates:                                    # evaluated in order, top to bottom
       - {rule_id: R-EVT-01, weight: 5, veto: true}  # no earnings before expiration
 ```
 
-A strategy only references rules. Every rule is defined once in `config/rules.yaml` (name, description, method, quantifiable, backtestable, history_source, history_start, status, indicator, operator and value, band_of, old ids). `name` is a short title; `description` explains the rule in plain words, spells out abbreviations, gives typical values and update frequency, and names the data source. A strategy entry has `rule_id`, a required `weight` (integer 1 to 5: how much this strategy cares about the rule) and an optional `veto: true`. The catalog has no weight, so the same rule can weigh 4 in one strategy and 1 in another. Any rule can be listed. A rule the app has no data for, including every `method: manual` rule, evaluates to unknown ❓ and is left out of the score. The loader refuses a `veto` on a manual rule, a missing or out-of-range `weight`, and the retired `variant_group`.
+A strategy only references rules. Every rule is defined once in `data/rules/rules.yaml` (name, description, method, quantifiable, backtestable, history_source, history_start, status, indicator, operator and value, band_of, old ids). `name` is a short title; `description` explains the rule in plain words, spells out abbreviations, gives typical values and update frequency, and names the data source. A strategy entry has `rule_id`, a required `weight` (integer 1 to 5: how much this strategy cares about the rule) and an optional `veto: true`. The catalog has no weight, so the same rule can weigh 4 in one strategy and 1 in another. Any rule can be listed. A rule the app has no data for, including every `method: manual` rule, evaluates to unknown ❓ and is left out of the score. The loader refuses a `veto` on a manual rule, a missing or out-of-range `weight`, and the retired `variant_group`.
 
 ## Languages
 
-Every text a person reads (`display_name`, `source`, `summary`, `help`, gate `display_name`, and rule text in `config/rules.yaml`) is `{en, zh}`. Both are required, English must not contain Chinese characters, and help paragraphs must pair up. The app refuses to start otherwise; `pytest` checks it too. Glossary: `docs/language.md`.
+Every text a person reads (`display_name`, `source`, `summary`, `help`, gate `display_name`, and rule text in `data/rules/rules.yaml`) is `{en, zh}`. Both are required, English must not contain Chinese characters, and help paragraphs must pair up. The app refuses to start otherwise; `pytest` checks it too. Glossary: `docs/language.md`.
 
 ## Rule ids
 
-Id = `R-` + category code + two digits, for example `R-TRD-05`. The same id means the same rule in every strategy. Inside a category the numbers run 01, 02, 03 ... in the order of `config/rules.yaml` with no gaps, and the category is split into topics (`topic_list` of the group), so the other lines of a measure sit right under its main rule. Categories run from macro down to detail, grouped into six aspects:
+Id = `R-` + category code + two digits, for example `R-TRD-05`. The same id means the same rule in every strategy. Inside a category the numbers run 01, 02, 03 ... in the order of `data/rules/rules.yaml` with no gaps, and the category is split into topics (`topic_list` of the group), so the other lines of a measure sit right under its main rule. Categories run from macro down to detail, grouped into six aspects:
 
 | Aspect | Categories |
 |---|---|
@@ -46,7 +46,7 @@ Id = `R-` + category code + two digits, for example `R-TRD-05`. The same id mean
 | Options | `LIQ` liquidity, `VOL` volatility, `CTR` contract selection, `RET` return and payoff |
 | Risk | `POS` position, account and portfolio, `THS` thesis and discipline, `EXT` management and exit |
 
-Each rule lists the old ids it replaces in `legacy_id` (A01 to Z20 plus T, R, M). Old alias rules were merged away, and every tiered measure was split into one rule per line (see Tiers). Three old rules are not rules any more because they are strategy choices (B12, D15, C06); see the comment at the end of `config/rules.yaml`. Rules removed after they were first added stay in `retired_rule_list`, listed by the `old_id` they had in the old format (VAL-02, LIQ-02, EVT-09, so they cannot be mistaken for a live `R-` id) with the reason; an old id is never given to a live rule, and a legacy id is on one rule only. The full list is on the 规则目录 page (`/rules`).
+Each rule lists the old ids it replaces in `legacy_id` (A01 to Z20 plus T, R, M). Old alias rules were merged away, and every tiered measure was split into one rule per line (see Tiers). Three old rules are not rules any more because they are strategy choices (B12, D15, C06); see the comment at the end of `data/rules/rules.yaml`. Rules removed after they were first added stay in `retired_rule_list`, listed by the `old_id` they had in the old format (VAL-02, LIQ-02, EVT-09, so they cannot be mistaken for a live `R-` id) with the reason; an old id is never given to a live rule, and a legacy id is on one rule only. The full list is on the 规则目录 page (`/rules`).
 
 A manual rule is a checklist item and uses the same sentence as the others ("Passes when you keep cash at least 30% of net value"); where the answer comes from (your brokerage account, your trade plan, your own judgment) is not repeated in the text. `method` says how a rule's value is obtained: `api_fetch` (stable API or CSV such as FRED and yfinance), `scrape` (web page, unofficial endpoint, spreadsheet), `computed` (calculated from fetched prices, series or option chains), `ai_search` (an AI reads web pages and records the result with its source), or `manual` (no data in the app: your own input, your trade plan or your brokerage account; a manual rule can still sit in a strategy, where it always shows unknown).
 
@@ -83,13 +83,13 @@ Retired. The old evaluator let rules sharing a `variant_group` act as loose and 
 
 ## Expiration windows
 
-A gate with `per_expiration_window: true` is evaluated once per window in `option_expiration_window_list` (`config/settings.yaml`). The symbol's result for that gate is the window with the highest score; the other windows are shown as alternatives. Rule `R-CTR-04` (DTE 30 to 45; old id `B07`) is fixed, so the standard window normally wins.
+A gate with `per_expiration_window: true` is evaluated once per window in `option_expiration_window_list` (`data/settings/benchmark.yaml`). The symbol's result for that gate is the window with the highest score; the other windows are shown as alternatives. Rule `R-CTR-04` (DTE 30 to 45; old id `B07`) is fixed, so the standard window normally wins.
 
 ## Validated and unvalidated strategies
 
-A strategy's score is a claim that it ranks stocks by future return. A claim is only shown as validated after `scripts/backtest_fundamentals.py` writes a report with every check in the decision gate passing. The gate is written in the strategy file's comments before the run (for `fundamentals`, in `config/strategies/fundamentals.yaml`). The report is `docs/reports/fundamentals_backtest.md`.
+A strategy's score is a claim that it ranks stocks by future return. A claim is only shown as validated after `scripts/backtest_fundamentals.py` writes a report with every check in the decision gate passing. The gate is written in the strategy file's comments before the run (for `fundamentals`, in `data/strategies/fundamentals.yaml`). The report is `docs/reports/fundamentals_backtest.md`.
 
-Backtest code: `stock_benchmark_backend/backtest.py` (score per rebalance date, baselines), `forward_returns.py` (returns after N trading days, minus the sector ETF), `factor_statistics.py` (rank IC, decile spread, Newey-West t). The score uses only the company table as it was on each date, so a rule whose value is only live (estimates, insider buying, PEG) is unknown in the backtest and is left out of the score.
+Backtest code: `backend/benchmark/score_backtest.py` (score per rebalance date, baselines), `forward_returns.py` (returns after N trading days, minus the sector ETF), `factor_statistics.py` (rank IC, decile spread, Newey-West t). The score uses only the company table as it was on each date, so a rule whose value is only live (estimates, insider buying, PEG) is unknown in the backtest and is left out of the score.
 
 ## Converting to other formats
 

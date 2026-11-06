@@ -3,7 +3,7 @@ import datetime
 import pandas
 import pytest
 
-from stock_benchmark_backend import macro_data
+from backend.benchmark import macro_data
 
 
 @pytest.fixture(autouse=True)

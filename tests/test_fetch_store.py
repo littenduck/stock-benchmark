@@ -2,12 +2,14 @@ import os
 
 import pandas
 
-from stock_benchmark_backend import fetch_cache, fetch_store, indicator_registry
-from stock_benchmark_backend.settings_loader import PROJECT_DIRECTORY
+from backend.benchmark import fetch_cache
+from backend.benchmark import fetch_store
+from backend.benchmark import indicator_registry
+from backend.shared import project_paths
 
 
 def build_registry():
-    return indicator_registry.indicator_registry_load_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "indicators.yaml"))
+    return indicator_registry.indicator_registry_load_from_yaml_file(project_paths.INDICATOR_FILE_PATH)
 
 
 def test_an_answer_about_one_symbol_and_a_market_answer_go_to_their_own_files(tmp_path):

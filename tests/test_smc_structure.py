@@ -1,4 +1,4 @@
-from stock_benchmark_backend import smc_structure as smc
+from backend.benchmark import smc_structure as smc
 
 
 def _v_shape():

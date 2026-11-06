@@ -1,7 +1,7 @@
 import numpy
 import pandas
 
-from stock_benchmark_backend import forward_returns
+from backend.benchmark import forward_returns
 
 
 def build_daily_price(start_price, daily_growth, day_count, start="2024-01-01"):

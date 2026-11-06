@@ -5,10 +5,10 @@ Each language stands alone: Chinese mode shows only the Chinese text and English
 
 ## Writing both languages
 
-- Every text in `config/rules.yaml`, `config/indicators.yaml`, `config/strategies/*.yaml` and `config/settings.yaml` that a person reads is an object `{en: "...", zh: "..."}`. Both are required and non-empty; the app refuses to start otherwise. A rule has a `description` (its pass sentence) and an indicator has a `description` (what it measures, how it is read, where the value comes from, typical values), both `{en, zh}`; they spell out every abbreviation (FOMC, CPI, IV and so on) and name the data source. A `rule_name` and an `indicator_name` are identifiers in lower case with underscores, English only, like a variable name; so is the `quantifiable` field.
+- Every text in `data/rules/rules.yaml`, `data/indicators/indicators.yaml`, `data/strategies/*.yaml` and `data/settings/benchmark.yaml` that a person reads is an object `{en: "...", zh: "..."}`. Both are required and non-empty; the app refuses to start otherwise. A rule has a `description` (its pass sentence) and an indicator has a `description` (what it measures, how it is read, where the value comes from, typical values), both `{en, zh}`; they spell out every abbreviation (FOMC, CPI, IV and so on) and name the data source. A `rule_name` and an `indicator_name` are identifiers in lower case with underscores, English only, like a variable name; so is the `quantifiable` field.
 - English must not contain Chinese characters. Use the glossary below; do not invent variants.
 - Technical terms stay English in both languages: GATE, VIX, SPX, DTE, IV, RV30, FGI, HY, bp, Delta, Put, Call.
-- Interface strings live in `static/language.js` (`UI_TEXT`), with the same rule.
+- Interface strings live in `frontend/language.js` (`UI_TEXT`), with the same rule.
 - Both texts are still written for every string, but a page shows one of them, never both.
 
 ## Glossary

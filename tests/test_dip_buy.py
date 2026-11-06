@@ -1,6 +1,6 @@
 import pytest
 
-from stock_benchmark_backend import dip_buy
+from backend.benchmark import dip_buy
 
 
 @pytest.mark.parametrize("rsi, points", [(29.9, 25), (30, 15), (34.99, 15), (35, 8), (45, 8), (45.1, 0)])

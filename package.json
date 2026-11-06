@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "@tabler/icons": "3.49.0"
-  }
+    "@tabler/icons": "3.49.0",
+    "lightweight-charts": "5.0.0"
+  },
+  "private": true,
+  "description": "Build-time only: Tabler icons (scripts/build_icons.py) and Lightweight Charts (backend/backtest/make_chart.py). Nothing here is loaded by the dashboard pages."
 }

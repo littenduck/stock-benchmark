@@ -1,6 +1,6 @@
 # Design
 
-Claude-style warm palette, Apple-level clarity. Five pages sharing `static/base.css`: the dashboard (`index.html`, `/`) and four catalog pages (`strategies.html` `/strategies`, `strategy.html` `/strategies/{id}`, `rules.html` `/rules`, `indicators.html` `/indicators`) for tokens and type; vanilla JS and CSS, no framework, no chart library, no web font, no CDN.
+Claude-style warm palette, Apple-level clarity. Five pages sharing `frontend/base.css`: the dashboard (`index.html`, `/`) and four catalog pages (`strategies.html` `/strategies`, `strategy.html` `/strategies/{id}`, `rules.html` `/rules`, `indicators.html` `/indicators`) for tokens and type; vanilla JS and CSS, no framework, no chart library, no web font, no CDN.
 Light theme is the default; the user can switch to dark with the button in the sidebar header.
 
 ## Colors
@@ -53,7 +53,7 @@ Spacing only 4, 8, 12, 16, 24, 32px (`--space-1` to `--space-6`). A field (`.fie
 
 ## Status
 
-No emoji anywhere. Status = icon (16px, `currentColor`) plus text. All icons are Tabler Icons 3.49.0 (MIT), taken unchanged from the official npm package and bundled into `static/icons.svg` by `scripts/build_icons.py`. Pages reference them as `/icons.svg#icon-name`. Outline icons render at 1.5px. Never hand-draw an icon: if a needed icon is missing from Tabler, pick the closest Tabler icon.
+No emoji anywhere. Status = icon (16px, `currentColor`) plus text. All icons are Tabler Icons 3.49.0 (MIT), taken unchanged from the official npm package and bundled into `frontend/icons.svg` by `scripts/build_icons.py`. Pages reference them as `/icons.svg#icon-name`. Outline icons render at 1.5px. Never hand-draw an icon: if a needed icon is missing from Tabler, pick the closest Tabler icon.
 
 | Status | Icon | Text | Color |
 |---|---|---|---|
@@ -117,7 +117,7 @@ Each rule row on the dashboard has a small help icon (a link) after its id. Hove
 
 ## Catalog pages
 
-The four catalog pages share one frame (`main.catalog`, styles in `base.css`): a top bar with `nav` links (Dashboard, Strategies, Rules, Indicators; the current one has `aria-current="page"`) and the language button, a page header (`h1` and a `small` summary), and the entries. `static/page.js` holds what they share: the nav, the entries of a rule and of an indicator, a line of facts and the row named by the URL hash (`.is-target`).
+The four catalog pages share one frame (`main.catalog`, styles in `base.css`): a top bar with `nav` links (Dashboard, Strategies, Rules, Indicators; the current one has `aria-current="page"`) and the language button, a page header (`h1` and a `small` summary), and the entries. `frontend/page.js` holds what they share: the nav, the entries of a rule and of an indicator, a line of facts and the row named by the URL hash (`.is-target`).
 
 **An entry is a card laid flat, not a grid of cells.** A `.row` with the id in a 88px column and the content beside it: `rule_name` or `indicator_name` (`h3`, breaking after underscores), the pass sentence or description (`p`), then `small` lines indented under it, one per kind of fact. A fact line shows only the facts that exist (`label: value · label: value`), so there are no dashes and no half-empty cells. The lines: the indicator text with every line of its measure (rules only, and only under the main rule: the other lines of a measure are indented under it with `data-tier`, and share its text); the data facts (method, quantifiable, status, backtestable with its history, fetch every, max age); older ids and the indicator (rules) or the scope (indicators); the note; and the links: the strategies that use a rule (to their page, with weight and veto) and the rules that test an indicator (to the rules page). Every link between the three catalogs is an anchor (`#rule-R-MAC-03`, `#indicator-I-003`).
 
