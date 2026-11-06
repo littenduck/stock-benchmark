@@ -5,7 +5,7 @@ import pytest
 
 from stock_benchmark_backend import history_series
 from stock_benchmark_backend.rule_catalog import rule_catalog_load_rule_catalog_from_yaml_file
-from stock_benchmark_backend.settings_loader import PROJECT_DIRECTORY
+from stock_benchmark_backend import project_paths
 
 
 def daily(values, start="2020-01-01"):
@@ -65,14 +65,14 @@ def test_every_builder_returns_a_series_when_the_sources_are_available(monkeypat
 
 
 def test_every_builder_serves_an_indicator_of_a_backtestable_rule():
-    catalog = rule_catalog_load_rule_catalog_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "rules.yaml"))
+    catalog = rule_catalog_load_rule_catalog_from_yaml_file(project_paths.RULE_FILE_PATH)
     backtestable_indicator_set = {entry.indicator for entry in catalog.rule_entry_by_id.values() if entry.backtestable == "yes"}
     assert set(history_series.HISTORY_SERIES_BUILDER_BY_INDICATOR_NAME) <= backtestable_indicator_set
 
 
 def test_company_indicator_columns_are_all_backtestable_catalog_indicators():
     from stock_benchmark_backend import edgar_data, fundamental_series
-    catalog = rule_catalog_load_rule_catalog_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "rules.yaml"))
+    catalog = rule_catalog_load_rule_catalog_from_yaml_file(project_paths.RULE_FILE_PATH)
     backtestable_indicator_set = {entry.indicator for entry in catalog.rule_entry_by_id.values() if entry.backtestable == "yes"}
     days = pandas.date_range("2020-01-01", periods=3, freq="D")
     columns = set(fundamental_series.fundamental_series_build_table({"facts": {}}, days, pandas.Series(1.0, index=days)).columns)

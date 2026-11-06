@@ -6,7 +6,7 @@ import pytest
 
 from stock_benchmark_backend import indicator_calculation as I
 from stock_benchmark_backend import indicator_registry
-from stock_benchmark_backend.settings_loader import PROJECT_DIRECTORY
+from stock_benchmark_backend import project_paths
 from stock_benchmark_backend import live_indicators, history_series, option_chain
 
 
@@ -20,7 +20,7 @@ def test_the_newest_value_of_a_series_comes_with_the_time_it_was_observed():
 
 
 def test_every_series_indicator_of_the_registry_has_a_builder_and_every_edgar_one_is_produced():
-    registry = indicator_registry.indicator_registry_load_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "indicators.yaml"))
+    registry = indicator_registry.indicator_registry_load_from_yaml_file(project_paths.INDICATOR_FILE_PATH)
     for indicator in registry.indicator_by_name.values():
         if indicator.fetch_group in live_indicators.SERIES_GROUP_ID_LIST and indicator.status == "built" \
                 and indicator.indicator_name not in live_indicators.MADE_WITH_PRICE_FIGURES_INDICATOR_NAME_SET:

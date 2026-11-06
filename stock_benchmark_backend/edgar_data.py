@@ -128,8 +128,3 @@ def edgar_data_find_audit_or_late_filing_problem(submissions: dict, today: datet
             return True
     return False
 
-
-def edgar_data_pick_latest_known(series: pandas.Series, day: pandas.Timestamp, days_back: int = 0) -> Optional[float]:
-    """The last value filed on or before day minus days_back."""
-    known = series[series.index <= day - pandas.Timedelta(days=days_back)]
-    return None if known.empty else float(known.iloc[-1])

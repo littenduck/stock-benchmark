@@ -1,4 +1,4 @@
-"""Load config/settings.yaml into typed settings."""
+"""Load data/settings/benchmark.yaml into typed settings."""
 import datetime
 import os
 from dataclasses import dataclass, field
@@ -9,7 +9,7 @@ import yaml
 from stock_benchmark_backend import indicator_registry
 from stock_benchmark_backend.localized_text import LANGUAGE_CODE_SET, LocalizedText, localized_text_build_from_raw_value
 
-PROJECT_DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from stock_benchmark_backend import project_paths
 
 
 @dataclass
@@ -54,36 +54,37 @@ def settings_loader_validate_language_code(language_code: str) -> str:
     return language_code
 
 
-def settings_loader_build_sidebar_indicator_list(indicator_id_list: list, settings_file_path: str) -> List[MarketIndicatorSetting]:
-    """The sidebar shows these indicators; their display name and whether a higher value is risky live in config/indicators.yaml."""
-    registry = indicator_registry.indicator_registry_load_from_yaml_file(
-        os.path.join(os.path.dirname(settings_file_path), "indicators.yaml"))
+def settings_loader_build_sidebar_indicator_list(indicator_id_list: list, indicator_file_path: str) -> List[MarketIndicatorSetting]:
+    """The sidebar shows these indicators; their display name and whether a higher value is risky live in data/indicators/indicators.yaml."""
+    registry = indicator_registry.indicator_registry_load_from_yaml_file(indicator_file_path)
     sidebar_list = []
     for indicator_id in indicator_id_list:
         indicator = registry.indicator_by_id.get(indicator_id)
         if indicator is None or indicator.display_name is None:
-            raise ValueError("sidebar indicator {} needs a display_name in config/indicators.yaml".format(indicator_id))
+            raise ValueError("sidebar indicator {} needs a display_name in data/indicators/indicators.yaml".format(indicator_id))
         sidebar_list.append(MarketIndicatorSetting(indicator.indicator_name, indicator.display_name, indicator.is_higher_value_risky))
     return sidebar_list
 
 
 def settings_loader_validate_symbol_list(symbol_list) -> List[str]:
     if not symbol_list or not all(isinstance(symbol, str) and symbol.strip() for symbol in symbol_list):
-        raise ValueError("config/symbols.yaml needs a non-empty symbol_list of tickers")
+        raise ValueError("data/symbols/watchlist.yaml needs a non-empty symbol_list of tickers")
     if len(set(symbol_list)) != len(symbol_list):
-        raise ValueError("config/symbols.yaml lists a symbol twice")
+        raise ValueError("data/symbols/watchlist.yaml lists a symbol twice")
     return list(symbol_list)
 
 
-def settings_loader_load_settings_from_yaml_file(settings_file_path: str) -> ApplicationSettings:
+def settings_loader_load_settings_from_yaml_file(settings_file_path: str,
+                                                 watchlist_file_path: str = project_paths.WATCHLIST_FILE_PATH,
+                                                 indicator_file_path: str = project_paths.INDICATOR_FILE_PATH) -> ApplicationSettings:
     with open(settings_file_path) as settings_file:
         raw = yaml.safe_load(settings_file)
-    with open(os.path.join(os.path.dirname(settings_file_path), "symbols.yaml")) as symbols_file:
+    with open(watchlist_file_path, encoding="utf8") as symbols_file:
         symbol_list = settings_loader_validate_symbol_list(yaml.safe_load(symbols_file)["symbol_list"])
     return ApplicationSettings(
         refresh_interval_minutes=raw["refresh_interval_minutes"],
         default_strategy_id=raw["default_strategy_id"],
-        market_indicator_list=settings_loader_build_sidebar_indicator_list(raw["market_indicator_list"], settings_file_path),
+        market_indicator_list=settings_loader_build_sidebar_indicator_list(raw["market_indicator_list"], indicator_file_path),
         watchlist_symbol_list=symbol_list,
         option_expiration_window_list=[ExpirationWindowSetting(**item) for item in raw["option_expiration_window_list"]],
         target_absolute_delta=raw["target_absolute_delta"],

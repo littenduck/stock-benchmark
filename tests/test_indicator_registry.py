@@ -4,9 +4,9 @@ import pytest
 import yaml
 
 from stock_benchmark_backend import indicator_calculation, indicator_registry, rule_catalog, settings_loader
-from stock_benchmark_backend.settings_loader import PROJECT_DIRECTORY
+from stock_benchmark_backend import project_paths
 
-INDICATOR_FILE_PATH = os.path.join(PROJECT_DIRECTORY, "config", "indicators.yaml")
+INDICATOR_FILE_PATH = project_paths.INDICATOR_FILE_PATH
 
 
 @pytest.fixture(scope="module")
@@ -53,7 +53,7 @@ def test_validation_catches_a_bad_age_group_or_history(tmp_path):
 
 
 def test_rules_take_their_facts_from_the_indicator(registry):
-    catalog = rule_catalog.rule_catalog_load_rule_catalog_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "rules.yaml"))
+    catalog = rule_catalog.rule_catalog_load_rule_catalog_from_yaml_file(project_paths.RULE_FILE_PATH)
     indicator = registry.indicator_by_name["treasury_ten_year_yield"]
     for rule_id in ("R-MAC-03", "R-MAC-04"):  # two lines of one indicator
         entry = catalog.rule_entry_by_id[rule_id]
@@ -69,7 +69,7 @@ def test_a_rule_may_not_repeat_what_its_indicator_owns(registry):
 
 
 def test_the_sidebar_reads_names_from_the_registry():
-    settings = settings_loader.settings_loader_load_settings_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "settings.yaml"))
+    settings = settings_loader.settings_loader_load_settings_from_yaml_file(project_paths.SETTINGS_FILE_PATH)
     assert [item.indicator_name for item in settings.market_indicator_list][:2] == ["vix_level", "vxn_level"]
     assert settings.market_indicator_list[0].is_higher_value_risky and settings.market_indicator_list[0].display_name.en == "VIX"
 
@@ -82,7 +82,7 @@ def test_every_indicator_has_a_short_id_and_a_long_name(registry):
 
 
 def test_a_rule_resolves_its_indicator_id_to_the_name_and_keeps_the_id():
-    catalog = rule_catalog.rule_catalog_load_rule_catalog_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "rules.yaml"))
+    catalog = rule_catalog.rule_catalog_load_rule_catalog_from_yaml_file(project_paths.RULE_FILE_PATH)
     entry = catalog.rule_entry_by_id["R-MAC-03"]
     assert entry.indicator == "treasury_ten_year_yield" and entry.indicator_id == catalog.indicator_registry.indicator_by_name[entry.indicator].indicator_id
 

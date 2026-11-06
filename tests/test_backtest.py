@@ -4,13 +4,13 @@ import numpy
 import pandas
 
 from stock_benchmark_backend import backtest, factor_statistics, rule_catalog, strategy_loader
-from stock_benchmark_backend.web_server import PROJECT_DIRECTORY
+from stock_benchmark_backend import project_paths
 
 
 def load_fundamentals_strategy():
-    catalog = rule_catalog.rule_catalog_load_rule_catalog_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "rules.yaml"))
+    catalog = rule_catalog.rule_catalog_load_rule_catalog_from_yaml_file(project_paths.RULE_FILE_PATH)
     strategy_by_id = strategy_loader.strategy_loader_load_all_strategy_definitions_from_directory(
-        os.path.join(PROJECT_DIRECTORY, "config", "strategies"), catalog)
+        project_paths.BENCHMARK_STRATEGY_DIRECTORY, catalog)
     return strategy_by_id["fundamentals"]
 
 

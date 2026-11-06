@@ -1,6 +1,6 @@
 """Fetch the slower sources for the live dashboard, each through the fetch cache so a source is asked only when it is due.
 
-Every function that reaches the network takes the FetchCache and names its fetch group (see config/indicators.yaml); the cache decides, from the
+Every function that reaches the network takes the FetchCache and names its fetch group (see data/indicators/indicators.yaml); the cache decides, from the
 group's fetch_every, market_hours_only and fetch_at, whether to ask again or hand back the last answer. Values carry observed_at so a value older
 than its indicator's max_age is dropped later (indicator_registry_drop_stale_values).
 """

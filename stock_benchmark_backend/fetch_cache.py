@@ -1,6 +1,6 @@
 """Decide when a source must be asked again, and keep what it answered until then.
 
-The rules come from config/indicators.yaml: every fetch group has a market_hours_only flag and optional fetch_at times, and its interval is the
+The rules come from data/indicators/indicators.yaml: every fetch group has a market_hours_only flag and optional fetch_at times, and its interval is the
 shortest fetch_every of its indicators. A refresh asks the cache for each group; the cache calls the real fetch function only when the group is due,
 so an indicator that is not due costs no request.
 """

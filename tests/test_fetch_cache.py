@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 import pytest
 
 from stock_benchmark_backend import fetch_cache, indicator_registry
-from stock_benchmark_backend.settings_loader import PROJECT_DIRECTORY
+from stock_benchmark_backend import project_paths
 from stock_benchmark_backend.strategy_evaluation import IndicatorValue
 
 NEW_YORK = ZoneInfo("America/New_York")
@@ -20,7 +20,7 @@ def new_york_time(hour, minute=0, day=22):  # Thursday 2026-10-22
 
 @pytest.fixture
 def registry():
-    return indicator_registry.indicator_registry_load_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "indicators.yaml"))
+    return indicator_registry.indicator_registry_load_from_yaml_file(project_paths.INDICATOR_FILE_PATH)
 
 
 class Clock:

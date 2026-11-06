@@ -1,5 +1,5 @@
 """Calendar facts for the event rules: Fed meetings, inflation and jobs releases, election day, option expiration days.
-Pure date logic. The release dates come from config/settings.yaml (macro_event_calendar), kept by hand from the official schedules."""
+Pure date logic. The release dates come from data/settings/benchmark.yaml (macro_event_calendar), kept by hand from the official schedules."""
 import datetime
 from typing import Dict, List, Optional
 

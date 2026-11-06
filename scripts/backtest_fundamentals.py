@@ -1,11 +1,11 @@
-"""Backtest the fundamentals strategy on the stocks in config/symbols.yaml and write docs/reports/fundamentals_backtest.md.
+"""Backtest the fundamentals strategy on the stocks in data/symbols/watchlist.yaml and write docs/reports/fundamentals_backtest.md.
 
 Run from the project folder with the project's Python:
 
     EDGAR_CONTACT=you@example.com .venv/bin/python scripts/backtest_fundamentals.py
 
 It needs internet: SEC EDGAR for company facts and Yahoo (yfinance) for prices, sectors and the sector ETFs. ETFs in the symbol list have
-no company facts and are left out. The decision gate is the one written in config/strategies/fundamentals.yaml before this was run.
+no company facts and are left out. The decision gate is the one written in data/strategies/fundamentals.yaml before this was run.
 """
 import datetime
 import os
@@ -17,6 +17,7 @@ import yaml
 PROJECT_DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_DIRECTORY)
 
+from stock_benchmark_backend import project_paths
 from stock_benchmark_backend import (  # noqa: E402
     backtest, company_indicators, edgar_data, forward_returns, factor_statistics, history_series, market_data, rule_catalog,
     strategy_loader,
@@ -30,19 +31,19 @@ PRICE_HISTORY_PERIOD = "max"
 
 
 def load_symbol_list():
-    with open(os.path.join(PROJECT_DIRECTORY, "config", "symbols.yaml"), encoding="utf8") as symbol_file:
+    with open(project_paths.WATCHLIST_FILE_PATH, encoding="utf8") as symbol_file:
         return yaml.safe_load(symbol_file)["symbol_list"]
 
 
 def load_fundamentals_strategy():
-    catalog = rule_catalog.rule_catalog_load_rule_catalog_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "rules.yaml"))
+    catalog = rule_catalog.rule_catalog_load_rule_catalog_from_yaml_file(project_paths.RULE_FILE_PATH)
     strategy_by_id = strategy_loader.strategy_loader_load_all_strategy_definitions_from_directory(
-        os.path.join(PROJECT_DIRECTORY, "config", "strategies"), catalog)
+        project_paths.BENCHMARK_STRATEGY_DIRECTORY, catalog)
     return strategy_by_id["fundamentals"]
 
 
 def load_settings():
-    with open(os.path.join(PROJECT_DIRECTORY, "config", "settings.yaml"), encoding="utf8") as settings_file:
+    with open(project_paths.SETTINGS_FILE_PATH, encoding="utf8") as settings_file:
         return yaml.safe_load(settings_file)
 
 
@@ -122,7 +123,7 @@ def main():
             etf_return_by_horizon[horizon].reindex(rebalance_dates))
 
     report_lines = ["# Fundamentals strategy backtest", "",
-                    "Generated {} from the stocks in `config/symbols.yaml` that have SEC company facts.".format(datetime.date.today()), "",
+                    "Generated {} from the stocks in `data/symbols/watchlist.yaml` that have SEC company facts.".format(datetime.date.today()), "",
                     "**Survivorship warning:** the stock list is today's list. Companies that failed or left the index are not in it, so every result here is biased upward.", "",
                     "Scores use only the company table as it was on each rebalance date (EDGAR filings by acceptance date). Rules that need live Yahoo data (estimates, insider buying, PEG, EV/EBITDA when price is needed) are unknown on past dates and do not count.", ""]
     report_lines += ["## Coverage", "", "- Stocks tested: {} ({})".format(len(stock_list), ", ".join(stock_list)),

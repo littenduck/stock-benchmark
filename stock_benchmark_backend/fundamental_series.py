@@ -1,6 +1,6 @@
 """Company fundamentals as they were known on each day, built from SEC EDGAR filings (and a price series for the valuation ratios).
 
-build_table returns one row per calendar day with a column for each indicator id used in config/rules.yaml. Figures are
+build_table returns one row per calendar day with a column for each indicator id used in data/rules/rules.yaml. Figures are
 trailing twelve months (see edgar_data). Return on invested capital is approximate: operating income taxed at 21% over equity plus
 debt minus cash. EBITDA is operating income plus depreciation and amortization.
 """

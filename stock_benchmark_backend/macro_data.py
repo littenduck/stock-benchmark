@@ -62,10 +62,3 @@ def macro_data_fetch_high_yield_credit_spread_series() -> pandas.Series:
     """Option adjusted spread in percent points; multiply by 100 for basis points."""
     return macro_data_fetch_fred_series_by_series_id("BAMLH0A0HYM2")
 
-
-def macro_data_get_upcoming_macro_event_list_from_calendar(
-    macro_event_calendar: list, window_end_date: datetime.date,
-) -> List[dict]:
-    today = datetime.date.today()
-    return [event for event in macro_event_calendar
-            if today <= datetime.date.fromisoformat(str(event["event_date"])) <= window_end_date]

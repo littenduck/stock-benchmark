@@ -4,7 +4,7 @@ import pytest
 import yaml
 
 from stock_benchmark_backend import event_calendar, settings_loader
-from stock_benchmark_backend.settings_loader import PROJECT_DIRECTORY
+from stock_benchmark_backend import project_paths
 
 CALENDAR = [
     {"event_name": "FOMC", "event_date": "2026-10-27", "event_end_date": "2026-10-28"},
@@ -56,7 +56,7 @@ def test_ex_dividend_dates_are_projected_every_quarter():
 
 
 def test_the_release_calendar_in_settings_is_well_formed():
-    settings = settings_loader.settings_loader_load_settings_from_yaml_file(f"{PROJECT_DIRECTORY}/config/settings.yaml")
+    settings = settings_loader.settings_loader_load_settings_from_yaml_file(project_paths.SETTINGS_FILE_PATH)
     covered = event_calendar.event_calendar_build_covered_until_by_event_name(settings.macro_event_covered_until)
     assert set(covered) == {"FOMC", "CPI", "JOBS", "PCE"}
     for event in settings.macro_event_calendar:

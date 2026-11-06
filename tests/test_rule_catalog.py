@@ -7,11 +7,12 @@ from stock_benchmark_backend import indicator_calculation
 from stock_benchmark_backend.localized_text import CHINESE_CHARACTER_PATTERN, LocalizedText
 from stock_benchmark_backend.rule_catalog import RetiredRule, RuleCatalog, RuleCatalogEntry, RuleGroup, \
     rule_catalog_load_rule_catalog_from_yaml_file, rule_catalog_validate_rule_catalog_against_known_indicators
-from stock_benchmark_backend.settings_loader import PROJECT_DIRECTORY, settings_loader_load_settings_from_yaml_file
+from stock_benchmark_backend import project_paths
+from stock_benchmark_backend.settings_loader import settings_loader_load_settings_from_yaml_file
 from stock_benchmark_backend.strategy_loader import strategy_loader_build_rule_definition_from_catalog, \
     strategy_loader_load_all_strategy_definitions_from_directory
 
-CATALOG_FILE_PATH = os.path.join(PROJECT_DIRECTORY, "config", "rules.yaml")
+CATALOG_FILE_PATH = project_paths.RULE_FILE_PATH
 
 
 def test_project_catalog_and_strategies_are_valid():
@@ -19,7 +20,7 @@ def test_project_catalog_and_strategies_are_valid():
     assert rule_catalog_validate_rule_catalog_against_known_indicators(
         catalog, catalog.indicator_registry.built_indicator_name_set()) == []
     strategy_by_id = strategy_loader_load_all_strategy_definitions_from_directory(
-        os.path.join(PROJECT_DIRECTORY, "config", "strategies"), catalog)
+        project_paths.BENCHMARK_STRATEGY_DIRECTORY, catalog)
     assert "sell_put_four_in_one" in strategy_by_id
 
 
@@ -156,7 +157,7 @@ def test_every_tier_line_points_to_a_main_rule_of_the_same_category():
 def test_every_strategy_and_indicator_text_is_bilingual():
     catalog = rule_catalog_load_rule_catalog_from_yaml_file(CATALOG_FILE_PATH)
     strategy_by_id = strategy_loader_load_all_strategy_definitions_from_directory(
-        os.path.join(PROJECT_DIRECTORY, "config", "strategies"), catalog)
+        project_paths.BENCHMARK_STRATEGY_DIRECTORY, catalog)
     for strategy in strategy_by_id.values():
         for field_name in ("display_name", "source", "summary", "help_text"):
             assert_localized_text_is_complete(getattr(strategy, field_name), strategy.strategy_id + " " + field_name)
@@ -164,7 +165,7 @@ def test_every_strategy_and_indicator_text_is_bilingual():
             strategy.strategy_id + " help paragraphs must pair up"
         for gate in strategy.gate_list:
             assert_localized_text_is_complete(gate.display_name, strategy.strategy_id + " " + gate.gate_id)
-    settings = settings_loader_load_settings_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "settings.yaml"))
+    settings = settings_loader_load_settings_from_yaml_file(project_paths.SETTINGS_FILE_PATH)
     assert settings.default_language == "en"
     for indicator_setting in settings.market_indicator_list:
         assert_localized_text_is_complete(indicator_setting.display_name, indicator_setting.indicator_name)
@@ -302,8 +303,7 @@ def test_no_config_file_repeats_a_key():
         return yaml.SafeLoader.construct_mapping(loader, node, deep=deep)
 
     StrictLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping)
-    config_directory = os.path.join(PROJECT_DIRECTORY, "config")
-    for directory, _, file_name_list in os.walk(config_directory):
+    for directory, _, file_name_list in os.walk(project_paths.DATA_DIRECTORY):
         for file_name in file_name_list:
             if file_name.endswith(".yaml"):
                 with open(os.path.join(directory, file_name), encoding="utf8") as config_file:
@@ -330,7 +330,7 @@ def test_english_and_chinese_texts_carry_the_same_numbers():
 
 def test_every_indicator_a_rule_tests_with_a_number_names_its_unit():
     import yaml
-    raw_indicator_list = yaml.safe_load(open(os.path.join(PROJECT_DIRECTORY, "config", "indicators.yaml"), encoding="utf8"))["indicator_list"]
+    raw_indicator_list = yaml.safe_load(open(project_paths.INDICATOR_FILE_PATH, encoding="utf8"))["indicator_list"]
     catalog = rule_catalog_load_rule_catalog_from_yaml_file(CATALOG_FILE_PATH)
     numeric_id_set = {entry.indicator_id for entry in catalog.rule_entry_by_id.values() if entry.indicator_id and entry.operator != "is_true"}
     for raw in raw_indicator_list:
@@ -384,14 +384,12 @@ def test_the_lines_of_a_rule_are_scaled_and_carry_their_unit_once():
 
 
 def test_the_symbols_come_from_symbols_yaml(tmp_path):
-    import shutil
-    settings = settings_loader_load_settings_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "settings.yaml"))
+    settings = settings_loader_load_settings_from_yaml_file(project_paths.SETTINGS_FILE_PATH)
     assert settings.watchlist_symbol_list[0] == "SPY" and len(set(settings.watchlist_symbol_list)) == len(settings.watchlist_symbol_list)
-    for name in ("settings.yaml", "indicators.yaml"):
-        shutil.copy(os.path.join(PROJECT_DIRECTORY, "config", name), tmp_path / name)
-    (tmp_path / "symbols.yaml").write_text("symbol_list: [SPY, SPY]\n")
+    watchlist = tmp_path / "watchlist.yaml"
+    watchlist.write_text("symbol_list: [SPY, SPY]\n")
     with pytest.raises(ValueError):
-        settings_loader_load_settings_from_yaml_file(str(tmp_path / "settings.yaml"))
-    (tmp_path / "symbols.yaml").write_text("symbol_list: []\n")
+        settings_loader_load_settings_from_yaml_file(project_paths.SETTINGS_FILE_PATH, watchlist_file_path=str(watchlist))
+    watchlist.write_text("symbol_list: []\n")
     with pytest.raises(ValueError):
-        settings_loader_load_settings_from_yaml_file(str(tmp_path / "settings.yaml"))
+        settings_loader_load_settings_from_yaml_file(project_paths.SETTINGS_FILE_PATH, watchlist_file_path=str(watchlist))

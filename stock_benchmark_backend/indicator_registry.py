@@ -1,4 +1,4 @@
-"""Load config/indicators.yaml: every measured quantity, defined once, with where it comes from and how often it is fetched.
+"""Load data/indicators/indicators.yaml: every measured quantity, defined once, with where it comes from and how often it is fetched.
 
 A rule points at an indicator by id; the facts about how the value is obtained (method, history, status) and when it is fetched or
 too old (fetch_every, max_age) belong to the indicator, so they are written once however many rules use it.

@@ -17,6 +17,7 @@ import yaml
 PROJECT_DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_DIRECTORY)
 
+from stock_benchmark_backend import project_paths
 from stock_benchmark_backend import company_indicators, history_series, market_data, yahoo_company  # noqa: E402
 
 RELATIVE_TOLERANCE = 0.05
@@ -35,7 +36,7 @@ def check_live_against_rebuilt_is_disagreement(live: float, rebuilt: float) -> b
 def main():
     if not os.environ.get("EDGAR_CONTACT"):
         sys.exit("Set EDGAR_CONTACT to a contact address first; SEC returns 403 to anonymous clients.")
-    with open(os.path.join(PROJECT_DIRECTORY, "config", "symbols.yaml"), encoding="utf8") as symbol_file:
+    with open(project_paths.WATCHLIST_FILE_PATH, encoding="utf8") as symbol_file:
         symbol_list = yaml.safe_load(symbol_file)["symbol_list"]
     price_by_symbol = market_data.market_data_fetch_daily_price_history_for_symbol_list(symbol_list, "5y")
     rows = []

@@ -12,11 +12,12 @@ from stock_benchmark_backend import (company_indicators, fetch_store, event_cale
                                 option_chain, rule_catalog, snapshot_storage, strategy_evaluation, yahoo_company, yahoo_gate)
 from stock_benchmark_backend.fetch_cache import FetchCache
 from stock_benchmark_backend.run_log import run_log_write
-from stock_benchmark_backend.settings_loader import ApplicationSettings, PROJECT_DIRECTORY
+from stock_benchmark_backend import project_paths
+from stock_benchmark_backend.settings_loader import ApplicationSettings
 from stock_benchmark_backend.strategy_evaluation import IndicatorValue, StrategyDefinition
 
-DATA_DIRECTORY = os.path.join(PROJECT_DIRECTORY, "data")
-SNAPSHOT_FILE_PATH = os.path.join(DATA_DIRECTORY, "latest_snapshot.json")
+DATA_DIRECTORY = project_paths.RUNTIME_DIRECTORY  # where fetched answers and per-symbol results are stored
+SNAPSHOT_FILE_PATH = project_paths.SNAPSHOT_FILE_PATH
 SECTOR_ETF_SYMBOL_LIST = sorted(set(company_indicators.SECTOR_ETF_BY_SECTOR_NAME.values()))
 MARKET_GAUGE_SYMBOL_LIST = ["^VIX", "^VXN", "^VVIX", "^VIX3M", "^GSPC", "CL=F", "DX-Y.NYB", "SPY", "RSP"] + SECTOR_ETF_SYMBOL_LIST
 SUPPORT_LOW_TRADING_DAY_COUNT = 60
@@ -33,10 +34,10 @@ price_reload_state: Dict[str, Any] = {"day": None, "missing": None}
 
 
 def refresh_scheduler_get_fetch_cache(settings: ApplicationSettings) -> FetchCache:
-    """The one cache of the process, built from config/indicators.yaml on first use."""
+    """The one cache of the process, built from data/indicators/indicators.yaml on first use."""
     if fetch_cache_holder["cache"] is None:
         yahoo_gate.yahoo_gate_install()
-        registry = indicator_registry.indicator_registry_load_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "indicators.yaml"))
+        registry = indicator_registry.indicator_registry_load_from_yaml_file(project_paths.INDICATOR_FILE_PATH)
         fetch_cache_holder["cache"] = FetchCache(registry, lambda now: market_data.market_data_determine_whether_us_market_is_open(
             datetime.datetime.fromtimestamp(now, datetime.timezone.utc), settings.market_holiday_date_set, settings.market_early_close_date_set),
             store_directory=DATA_DIRECTORY)
@@ -139,10 +140,10 @@ fundamental_indicator_info_by_name: Optional[Dict[str, dict]] = None
 
 def refresh_scheduler_get_fundamental_indicator_info() -> Dict[str, dict]:
     """Indicators used by rules in the Fundamentals aspect (IND, QUA, MGT, VAL, ACC): {indicator_name: {group_id, unit}}.
-    Loaded once from config/rules.yaml, so the financial panel lists the numbers the rules use, grouped as the rules are."""
+    Loaded once from data/rules/rules.yaml, so the financial panel lists the numbers the rules use, grouped as the rules are."""
     global fundamental_indicator_info_by_name
     if fundamental_indicator_info_by_name is None:
-        catalog = rule_catalog.rule_catalog_load_rule_catalog_from_yaml_file(os.path.join(PROJECT_DIRECTORY, "config", "rules.yaml"))
+        catalog = rule_catalog.rule_catalog_load_rule_catalog_from_yaml_file(project_paths.RULE_FILE_PATH)
         aspect_by_group = {group.group_id: group.aspect.en if group.aspect else None for group in catalog.rule_group_list}
         info_by_name = {}
         for entry in catalog.rule_entry_by_id.values():
@@ -252,7 +253,7 @@ def refresh_scheduler_evaluate_symbol_for_all_strategies(
 def refresh_scheduler_build_calendar_indicator_value_by_name(
     settings: ApplicationSettings, today: datetime.date,
 ) -> Dict[str, IndicatorValue]:
-    """Answers that depend on the date only (and on the release calendar in config/settings.yaml)."""
+    """Answers that depend on the date only (and on the release calendar in data/settings/benchmark.yaml)."""
     covered_until = event_calendar.event_calendar_build_covered_until_by_event_name(settings.macro_event_covered_until)
     jobs_report_is_near = event_calendar.event_calendar_determine_whether_jobs_report_is_within_one_day(
         settings.macro_event_calendar, covered_until, today)
@@ -382,7 +383,7 @@ def refresh_scheduler_refresh_snapshot_file(
     started = time.perf_counter()
     snapshot = refresh_scheduler_build_dashboard_snapshot(settings, strategy_definition_by_id)
     snapshot_storage.snapshot_storage_save_snapshot_to_json_file(snapshot, SNAPSHOT_FILE_PATH)
-    for symbol_result in snapshot["symbol_result_list"]:  # the same results, one file per symbol: data/symbols/<SYMBOL>/result.json
+    for symbol_result in snapshot["symbol_result_list"]:  # the same results, one file per symbol: data/runtime/symbols/<SYMBOL>/result.json
         snapshot_storage.snapshot_storage_save_snapshot_to_json_file(symbol_result, os.path.join(
             DATA_DIRECTORY, "symbols", fetch_store.fetch_store_safe_name(symbol_result["symbol"]), "result.json"))
     run_log_write("refresh done {:.1f}s symbols ok {} failed {} {}".format(
@@ -391,14 +392,14 @@ def refresh_scheduler_refresh_snapshot_file(
 
 
 def refresh_scheduler_determine_whether_refresh_is_due(settings: ApplicationSettings, fetch_cache: Optional[FetchCache] = None) -> bool:
-    """Due when there is no snapshot yet, when its symbols are not the ones in config/symbols.yaml, when the market is open and the snapshot is old enough, or when some source is due again
-    (this also catches the after-hours times in config/indicators.yaml: prices after the close, slow data before the open)."""
+    """Due when there is no snapshot yet, when its symbols are not the ones in data/symbols/watchlist.yaml, when the market is open and the snapshot is old enough, or when some source is due again
+    (this also catches the after-hours times in data/indicators/indicators.yaml: prices after the close, slow data before the open)."""
     snapshot = snapshot_storage.snapshot_storage_load_snapshot_from_json_file(SNAPSHOT_FILE_PATH)
     if snapshot is None or snapshot.get("schema_version") != SNAPSHOT_SCHEMA_VERSION:
         return True
     followed_symbol_set = {card["symbol"] for card in snapshot.get("symbol_result_list", [])} | set(snapshot.get("failed_symbol_list", []))
     if followed_symbol_set != set(settings.watchlist_symbol_list):
-        return True  # config/symbols.yaml changed: build the snapshot again now, not at the next due time
+        return True  # data/symbols/watchlist.yaml changed: build the snapshot again now, not at the next due time
     is_market_open = market_data.market_data_determine_whether_us_market_is_open(
         datetime.datetime.now(datetime.timezone.utc), settings.market_holiday_date_set,
         settings.market_early_close_date_set)
@@ -427,11 +428,9 @@ def refresh_scheduler_start_background_refresh_thread(
 
 if __name__ == "__main__" and "--once" in sys.argv:
     from stock_benchmark_backend import rule_catalog, settings_loader, strategy_loader
-    loaded_settings = settings_loader.settings_loader_load_settings_from_yaml_file(
-        os.path.join(PROJECT_DIRECTORY, "config", "settings.yaml"))
+    loaded_settings = settings_loader.settings_loader_load_settings_from_yaml_file(project_paths.SETTINGS_FILE_PATH)
     loaded_strategies = strategy_loader.strategy_loader_load_all_strategy_definitions_from_directory(
-        os.path.join(PROJECT_DIRECTORY, "config", "strategies"), rule_catalog.rule_catalog_load_rule_catalog_from_yaml_file(
-            os.path.join(PROJECT_DIRECTORY, "config", "rules.yaml")))
+        project_paths.BENCHMARK_STRATEGY_DIRECTORY, rule_catalog.rule_catalog_load_rule_catalog_from_yaml_file(project_paths.RULE_FILE_PATH))
     result = refresh_scheduler_refresh_snapshot_file(loaded_settings, loaded_strategies)
     print(result["generated_at"], len(result["symbol_result_list"]), "symbols, failed:", result["failed_symbol_list"])
     for symbol_result in result["symbol_result_list"]:

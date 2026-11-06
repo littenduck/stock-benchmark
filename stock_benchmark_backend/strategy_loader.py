@@ -17,7 +17,7 @@ def strategy_loader_build_rule_definition_from_catalog(raw_rule: dict, rule_cata
     A rule the app has no data for (a manual rule, or one without an indicator) is allowed; it always evaluates to unknown."""
     entry = rule_catalog.rule_entry_by_id.get(raw_rule["rule_id"])
     if entry is None:
-        raise ValueError("rule {} is not in config/rules.yaml".format(raw_rule["rule_id"]))
+        raise ValueError("rule {} is not in data/rules/rules.yaml".format(raw_rule["rule_id"]))
     if "variant_group" in raw_rule:
         raise ValueError("rule {}: variant_group is retired; list each tier as its own rule".format(entry.rule_id))
     weight = raw_rule.get("weight")

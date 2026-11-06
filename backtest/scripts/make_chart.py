@@ -32,8 +32,8 @@ RAW_DIR = ROOT / "data" / "raw"
 INTERVAL_LIST = {"1m": {"period": "7d"}, "1h": {"period": "730d"}, "1d": {"start": "2000-01-01"}}
 DEFAULT_SYMBOLS = ["QQQ", "TQQQ", "SOXX", "SOXL"]
 TEMPLATE_PATH = Path(__file__).resolve().parent / "chart_template.html"
-CSS_PATH = ROOT / "static" / "base.css"
-ICONS_PATH = ROOT / "static" / "icons.svg"
+CSS_PATH = ROOT.parent / "static" / "base.css"
+ICONS_PATH = ROOT.parent / "static" / "icons.svg"
 VERSION_PATH = ROOT.parent / "version.txt"  # the project root version, same file the server reads
 UP, DOWN = "#00C805", "#FF5000"  # Robinhood green and red
 # Installed by `npm install` from package.json (lightweight-charts, pinned to 5.0.0).

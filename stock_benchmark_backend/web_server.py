@@ -10,16 +10,16 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from stock_benchmark_backend import (indicator_calculation, indicator_registry, market_data, refresh_scheduler, request_limiter, rule_catalog,
-                                settings_loader, snapshot_storage, strategy_loader, terminal_data)
+from stock_benchmark_backend import (indicator_calculation, indicator_registry, market_data, project_paths, refresh_scheduler, request_limiter,
+                                rule_catalog, settings_loader, snapshot_storage, strategy_loader, terminal_data)
 
-PROJECT_DIRECTORY = settings_loader.PROJECT_DIRECTORY
+FRONTEND_DIRECTORY = project_paths.FRONTEND_DIRECTORY
 VERSION_PATTERN = re.compile(r"^\d+\.\d+\.\d+$")
 
 
 def web_server_read_version() -> str:
     """The one place the version is written: the version.txt file at the project root. The page and the API read it from here."""
-    with open(os.path.join(PROJECT_DIRECTORY, "version.txt"), encoding="utf8") as version_file:
+    with open(project_paths.VERSION_FILE_PATH, encoding="utf8") as version_file:
         version = version_file.read().strip()
     if not VERSION_PATTERN.match(version):
         raise SystemExit("version.txt must look like MAJOR.MINOR.PATCH, not " + repr(version))
@@ -27,12 +27,10 @@ def web_server_read_version() -> str:
 
 
 APP_VERSION = web_server_read_version()
-application_settings = settings_loader.settings_loader_load_settings_from_yaml_file(
-    os.path.join(PROJECT_DIRECTORY, "config", "settings.yaml"))
-application_rule_catalog = rule_catalog.rule_catalog_load_rule_catalog_from_yaml_file(
-    os.path.join(PROJECT_DIRECTORY, "config", "rules.yaml"))
+application_settings = settings_loader.settings_loader_load_settings_from_yaml_file(project_paths.SETTINGS_FILE_PATH)
+application_rule_catalog = rule_catalog.rule_catalog_load_rule_catalog_from_yaml_file(project_paths.RULE_FILE_PATH)
 strategy_definition_by_id = strategy_loader.strategy_loader_load_all_strategy_definitions_from_directory(
-    os.path.join(PROJECT_DIRECTORY, "config", "strategies"), application_rule_catalog)
+    project_paths.BENCHMARK_STRATEGY_DIRECTORY, application_rule_catalog)
 
 built_indicator_name_set = application_rule_catalog.indicator_registry.built_indicator_name_set()
 validation_error_list = indicator_registry.indicator_registry_validate(application_rule_catalog.indicator_registry) + [
@@ -108,91 +106,91 @@ def web_server_build_status(generated_at: Optional[str], prices_as_of: Optional[
 
 @app.get("/")
 def web_server_get_index_page() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "index.html"),
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "index.html"),
                         headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/rules")
 def web_server_get_rule_catalog_page() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "rules.html"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "rules.html"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/indicators")
 def web_server_get_indicator_catalog_page() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "indicators.html"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "indicators.html"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/strategies")
 def web_server_get_strategy_list_page() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "strategies.html"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "strategies.html"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/strategies/{strategy_id}")
 def web_server_get_strategy_page(strategy_id: str) -> FileResponse:
     web_server_find_strategy_id_or_raise(strategy_id)
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "strategy.html"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "strategy.html"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/terminal/{symbol}")
 def web_server_get_terminal_page(symbol: str) -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "terminal.html"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "terminal.html"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/terminal.js")
 def web_server_get_terminal_script() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "terminal.js"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "terminal.js"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/terminal.css")
 def web_server_get_terminal_stylesheet() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "terminal.css"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "terminal.css"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/page.js")
 def web_server_get_page_script() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "page.js"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "page.js"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/language.js")
 def web_server_get_language_script() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "language.js"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "language.js"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/rule-text.js")
 def web_server_get_rule_text_script() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "rule-text.js"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "rule-text.js"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/rule-card.js")
 def web_server_get_rule_card_script() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "rule-card.js"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "rule-card.js"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/asset-filter.js")
 def web_server_get_asset_filter_script() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "asset-filter.js"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "asset-filter.js"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/fundamentals-panel.js")
 def web_server_get_fundamentals_panel_script() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "fundamentals-panel.js"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "fundamentals-panel.js"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/icons.svg")
 def web_server_get_icon_sprite() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "icons.svg"), media_type="image/svg+xml",
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "icons.svg"), media_type="image/svg+xml",
                         headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/favicon.svg")
 def web_server_get_favicon() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "favicon.svg"), media_type="image/svg+xml",
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "favicon.svg"), media_type="image/svg+xml",
                         headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/base.css")
 def web_server_get_base_stylesheet() -> FileResponse:
-    return FileResponse(os.path.join(PROJECT_DIRECTORY, "static", "base.css"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(os.path.join(FRONTEND_DIRECTORY, "base.css"), headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/api/v1/version")

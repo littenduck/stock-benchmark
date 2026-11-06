@@ -4,6 +4,7 @@ import os
 import pytest
 from fastapi import HTTPException
 
+from stock_benchmark_backend import project_paths
 from stock_benchmark_backend import refresh_scheduler, snapshot_storage, web_server
 
 STRATEGY_ID = web_server.application_settings.default_strategy_id
@@ -164,7 +165,7 @@ def test_strategy_page_needs_a_known_strategy():
     assert error.value.status_code == 404
 
 
-STATIC_DIRECTORY = os.path.join(web_server.PROJECT_DIRECTORY, "static")
+STATIC_DIRECTORY = project_paths.FRONTEND_DIRECTORY
 PAGE_FILE_NAME_LIST = ["index.html", "rules.html", "indicators.html", "strategies.html", "strategy.html", "terminal.html"]
 
 
@@ -188,7 +189,7 @@ def test_the_catalog_pages_use_only_known_text_keys():
             assert key in key_set, "{} uses the unknown text {}".format(file_name, key)
 
 def test_the_version_is_read_from_the_version_file_only():
-    with open(os.path.join(web_server.PROJECT_DIRECTORY, "version.txt"), encoding="utf8") as version_file:
+    with open(os.path.join(project_paths.PROJECT_DIRECTORY, "version.txt"), encoding="utf8") as version_file:
         version = version_file.read().strip()
     assert web_server.APP_VERSION == version and web_server.web_server_get_version() == {"version": version}
     assert web_server.web_server_build_status("2026-01-01T00:00:00-05:00")["version"] == version
@@ -196,16 +197,17 @@ def test_the_version_is_read_from_the_version_file_only():
 
 def test_nothing_else_writes_the_version_number():
     import re
-    with open(os.path.join(web_server.PROJECT_DIRECTORY, "version.txt"), encoding="utf8") as version_file:
+    with open(os.path.join(project_paths.PROJECT_DIRECTORY, "version.txt"), encoding="utf8") as version_file:
         version = version_file.read().strip()
     assert re.match(r"^\d+\.\d+\.\d+$", version)
-    for directory in ("static", "stock_benchmark_backend"):
-        for name in os.listdir(os.path.join(web_server.PROJECT_DIRECTORY, directory)):
-            path = os.path.join(web_server.PROJECT_DIRECTORY, directory, name)
-            if os.path.isfile(path) and name.endswith((".py", ".js", ".html")):
-                assert version not in open(path, encoding="utf8").read(), "{} writes the version {}".format(path, version)
+    for directory in (project_paths.FRONTEND_DIRECTORY, os.path.join(project_paths.PROJECT_DIRECTORY, "stock_benchmark_backend")):
+        for folder, _, name_list in os.walk(directory):
+            for name in name_list:
+                path = os.path.join(folder, name)
+                if name.endswith((".py", ".js", ".html")):
+                    assert version not in open(path, encoding="utf8").read(), "{} writes the version {}".format(path, version)
 
 
 def test_the_license_names_the_copyright_holder():
-    text = open(os.path.join(web_server.PROJECT_DIRECTORY, "LICENSE"), encoding="utf8").read()
+    text = open(os.path.join(project_paths.PROJECT_DIRECTORY, "LICENSE"), encoding="utf8").read()
     assert text.startswith("MIT License") and "Copyright (c) 2026 littenduck" in text

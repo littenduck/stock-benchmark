@@ -1,9 +1,9 @@
 """Keep on disk what the fetch cache downloaded, so a restart reads it instead of downloading it again.
 
 One pickle file per downloaded answer, the latest only (a new answer replaces the old one):
-  data/symbols/<SYMBOL>/<group>.pkl   an answer about one symbol (company figures, option chains, short interest ...), and the part
+  data/runtime/symbols/<SYMBOL>/<group>.pkl   an answer about one symbol (company figures, option chains, short interest ...), and the part
                                       of a batched answer that belongs to the symbol (its price history, its latest quote)
-  data/market/<group>.pkl             an answer that is the same for every symbol (FRED, CNN, AAII ...)
+  data/runtime/market/<group>.pkl             an answer that is the same for every symbol (FRED, CNN, AAII ...)
 Each file holds {group, key, fetched_at, value}. A file that cannot be read (another pandas version, a cut write) is skipped, so the
 answer is simply downloaded again. Delete a symbol's folder to forget it.
 """

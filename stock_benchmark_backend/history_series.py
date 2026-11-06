@@ -1,6 +1,6 @@
 """Time series of the indicator values behind the rules, rebuilt from free history (FRED and Cboe).
 
-Each indicator id in config/indicators.yaml maps to a function that returns a pandas.Series indexed by date, with the value the
+Each indicator id in data/indicators/indicators.yaml maps to a function that returns a pandas.Series indexed by date, with the value the
 rule's operator tests. A backtest reads these series; the live dashboard will use the same definitions.
 Run `python -m stock_benchmark_backend.history_series` to fetch every series and compare it with the catalog.
 """
@@ -9,10 +9,9 @@ from typing import Callable, Dict, Optional
 
 import pandas
 
-from stock_benchmark_backend import cboe_data, edgar_data, finra_data, fundamental_series, macro_data, reference_data, sentiment_data
-from stock_benchmark_backend.settings_loader import PROJECT_DIRECTORY
+from stock_benchmark_backend import cboe_data, edgar_data, finra_data, fundamental_series, macro_data, project_paths, reference_data, sentiment_data
 
-PUT_CALL_CACHE_FILE_PATH = os.path.join(PROJECT_DIRECTORY, "data", "cache", cboe_data.PUT_CALL_CACHE_FILE_NAME)
+PUT_CALL_CACHE_FILE_PATH = os.path.join(project_paths.CACHE_DIRECTORY, cboe_data.PUT_CALL_CACHE_FILE_NAME)
 TRADING_DAYS_PER_MONTH = 21
 EPU_FIVE_YEAR_DAYS = 5 * 365
 EPU_THIRTY_DAYS = 30
@@ -161,18 +160,11 @@ def history_series_build_company_indicator_table(ticker: str, price_series: Opti
     return table
 
 
-def history_series_build_by_indicator_name(indicator_name: str) -> pandas.Series:
-    return HISTORY_SERIES_BUILDER_BY_INDICATOR_NAME[indicator_name]()
-
-
-def history_series_build_point_in_time_cpi_year_over_year(as_of_date_list) -> pandas.Series:
-    """CPI inflation as a backtest may see it: revisions after each date are not allowed to leak back (ALFRED vintages)."""
-    return macro_data.macro_data_build_point_in_time_year_over_year_series("CPIAUCSL", as_of_date_list)
 
 
 def history_series_check_against_catalog() -> None:
     import yaml
-    with open(os.path.join(PROJECT_DIRECTORY, "config", "indicators.yaml"), encoding="utf8") as indicator_file:
+    with open(project_paths.INDICATOR_FILE_PATH, encoding="utf8") as indicator_file:
         indicator_list = yaml.safe_load(indicator_file)["indicator_list"]
     rule_list_by_indicator: Dict[str, list] = {
         indicator["indicator_name"]: [indicator] for indicator in indicator_list if indicator["indicator_name"] in HISTORY_SERIES_BUILDER_BY_INDICATOR_NAME}

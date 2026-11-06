@@ -1,5 +1,5 @@
-"""Load config/rules.yaml: the one place where every rule is defined. A rule has no weight; strategies give it one.
-A rule that names an indicator takes that indicator's method, history and status from config/indicators.yaml."""
+"""Load data/rules/rules.yaml: the one place where every rule is defined. A rule has no weight; strategies give it one.
+A rule that names an indicator takes that indicator's method, history and status from data/indicators/indicators.yaml."""
 import os
 import re
 from dataclasses import dataclass, field
@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional, Set
 
 import yaml
 
+from stock_benchmark_backend import project_paths
 from stock_benchmark_backend.indicator_registry import IndicatorRegistry, indicator_registry_load_from_yaml_file
 from stock_benchmark_backend.localized_text import (
     LocalizedText, localized_text_build_from_raw_value, localized_text_build_optional_from_raw_value,
@@ -52,7 +53,7 @@ class RuleCatalogEntry:
     rule_id: str
     rule_name: str  # a short lower case name with underscores, like an indicator_name
     description: LocalizedText
-    topic: Optional[str] = None  # the topic of its group, in config/rules.yaml
+    topic: Optional[str] = None  # the topic of its group, in data/rules/rules.yaml
     method: Optional[str] = None
     quantifiable: Optional[str] = None
     backtestable: Optional[str] = None
@@ -67,7 +68,7 @@ class RuleCatalogEntry:
     legacy_id: List[str] = field(default_factory=list)
     note: Optional[LocalizedText] = None
     unit: Optional[str] = None  # the unit of the indicator, shown after the number of a line
-    indicator_description: Optional[LocalizedText] = None  # what the indicator measures, from config/indicators.yaml
+    indicator_description: Optional[LocalizedText] = None  # what the indicator measures, from data/indicators/indicators.yaml
     fetch_group: Optional[str] = None  # the three below come from the indicator
     fetch_every: Optional[str] = None
     max_age: Optional[str] = None
@@ -98,7 +99,7 @@ def rule_catalog_merge_indicator_fields(raw_rule: dict, registry: Optional[Indic
         return raw_rule
     repeated = [name for name in INDICATOR_OWNED_FIELD_LIST if name in raw_rule]
     if repeated:
-        raise ValueError("rule {} repeats {} that indicator {} owns; delete them from config/rules.yaml".format(
+        raise ValueError("rule {} repeats {} that indicator {} owns; delete them from data/rules/rules.yaml".format(
             raw_rule["rule_id"], ", ".join(repeated), indicator.indicator_name))
     return {**raw_rule, "indicator": indicator.indicator_name, "indicator_id": indicator.indicator_id,
             **{name: getattr(indicator, name) for name in INDICATOR_OWNED_FIELD_LIST},
@@ -151,9 +152,9 @@ def rule_catalog_find_rule_list_of_indicator(rule_catalog: "RuleCatalog", indica
     return [entry for entry in rule_catalog.rule_entry_by_id.values() if entry.indicator == indicator_name]
 
 
-def rule_catalog_load_rule_catalog_from_yaml_file(rule_catalog_file_path: str, indicator_file_path: Optional[str] = None) -> RuleCatalog:
-    """indicator_file_path defaults to indicators.yaml next to the rule file; without one the rules must carry their own fields."""
-    indicator_file_path = indicator_file_path or os.path.join(os.path.dirname(rule_catalog_file_path), "indicators.yaml")
+def rule_catalog_load_rule_catalog_from_yaml_file(rule_catalog_file_path: str,
+                                                  indicator_file_path: str = project_paths.INDICATOR_FILE_PATH) -> RuleCatalog:
+    """The indicator fields of each rule come from indicator_file_path; a missing file means the rules must carry their own fields."""
     registry = (indicator_registry_load_from_yaml_file(indicator_file_path)
                 if os.path.exists(indicator_file_path) else None)
     with open(rule_catalog_file_path, encoding="utf8") as rule_catalog_file:
@@ -246,7 +247,7 @@ def rule_catalog_validate_rule_catalog_against_known_indicators(
         if entry.history_start is not None and not HISTORY_START_PATTERN.match(str(entry.history_start)):
             error_list.append("rule {} has a bad history_start {}".format(entry.rule_id, entry.history_start))
         if registry is not None and entry.indicator and entry.indicator not in registry.indicator_by_name:
-            error_list.append("rule {} uses indicator {} that is not in config/indicators.yaml".format(entry.rule_id, entry.indicator))
+            error_list.append("rule {} uses indicator {} that is not in data/indicators/indicators.yaml".format(entry.rule_id, entry.indicator))
         if registry is not None and entry.indicator_id and registry.indicator_by_id[entry.indicator_id].indicator_name != entry.indicator:
             error_list.append("rule {} has an indicator that does not match its id".format(entry.rule_id))
         if entry.band_of and entry.band_of not in rule_catalog.rule_entry_by_id:

@@ -81,9 +81,6 @@ def market_data_find_next_earnings_date_in_calendar(calendar: Optional[dict], to
     return min(upcoming_date_list) if upcoming_date_list else None
 
 
-def market_data_fetch_next_earnings_date_by_symbol(symbol: str) -> Optional[datetime.date]:
-    return market_data_find_next_earnings_date_in_calendar(yfinance.Ticker(symbol).calendar, datetime.date.today())
-
 
 def market_data_determine_whether_us_market_is_open(
     current_time: datetime.datetime,
@@ -91,7 +88,7 @@ def market_data_determine_whether_us_market_is_open(
     early_close_date_set: FrozenSet[datetime.date] = frozenset(),
 ) -> bool:
     """Regular hours Monday to Friday, 9:30 to 16:00 New York time; closed on holidays,
-    13:00 close on early close days. Both sets come from config/settings.yaml."""
+    13:00 close on early close days. Both sets come from data/settings/benchmark.yaml."""
     new_york_time = current_time.astimezone(NEW_YORK_TIME_ZONE)
     if new_york_time.weekday() >= 5 or new_york_time.date() in holiday_date_set:
         return False
