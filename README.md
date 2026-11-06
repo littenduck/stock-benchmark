@@ -4,30 +4,20 @@ A personal stock dashboard. It shows market indicators and followed symbols, eac
 
 ## Architecture
 
-Layout: three top-level folders. `frontend/` is the pages, `backend/` is the Python code, `data/` holds the hand-edited files (under `data/runtime/` the generated ones).
-
-```mermaid
-flowchart TB
-    subgraph L1["Frontend"]
-        F["frontend/ pages"]
-    end
-    subgraph L2["Backend"]
-        direction LR
-        A["app"] --- B["benchmark"] --- T["backtest"] --- S["shared"]
-    end
-    subgraph L3["Data"]
-        direction LR
-        C["data/strategies/ symbols/ indicators/ rules/ settings/"] --- R["data/runtime/ (generated)"]
-    end
-    subgraph L4["Other folders"]
-        direction LR
-        SC["scripts/ dev tools"]
-        TE["tests/ pytest"]
-        DO["docs/ documentation"]
-        LI["licenses/ third-party notices"]
-    end
-
-    L1 --> L2 --> L3
+```
+stock-benchmark/
+├── frontend/          pages: HTML, CSS, JS
+├── backend/           Python code
+│   ├── app/           web server and API (top layer)
+│   ├── benchmark/     dashboard data and scoring
+│   ├── backtest/      strategy backtests
+│   └── shared/        helpers used by the layers above
+├── data/              hand-edited YAML: strategies, symbols, indicators, rules, settings
+│   └── runtime/       generated, git-ignored
+├── scripts/           dev tools
+├── tests/             pytest
+├── docs/              documentation
+└── licenses/          third-party notices
 ```
 
 ## Setup
