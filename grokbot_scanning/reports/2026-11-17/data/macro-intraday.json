@@ -1,0 +1,129 @@
+{
+ "market": {
+  "vix": 27.04,
+  "vix_chg_pct": 18.03,
+  "vxn": 36.03,
+  "vxn_chg_pct": 9.51,
+  "tnx": 5.1,
+  "tnx_1d_bp": -2.0,
+  "tnx_20d_bp": -1.6,
+  "dxy": 103.5,
+  "dxy_20d_pct": 1.74,
+  "hy_oas": 3.34,
+  "hy_date": "2026-11-16",
+  "hy_4w_bp": 5.0,
+  "fg": {
+   "score": 24.7,
+   "rating": "extreme fear",
+   "ts": "2026-11-17T16:05:43+00:00",
+   "prev_close": 31.0,
+   "week": 37.4,
+   "month": 18.2
+  },
+  "ndx_vs200_pct": -4.08,
+  "spy_vs200_pct": -0.01,
+  "qqq_vs200_pct": -4.07,
+  "soxx_vs_qqq_21d": -7.36,
+  "vxn_minus_vix": 8.99,
+  "vix_band": "偏高",
+  "vxn_band": "高",
+  "risk_off_hits": 2,
+  "risk_off": true,
+  "head": 3,
+  "tail": 0,
+  "base_score": -2,
+  "fg_band": "极度恐惧"
+ },
+ "per_ticker": {
+  "SPY": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "黄",
+   "reasons": [
+    "波动率高档",
+    "F&G极端"
+   ]
+  },
+  "QQQ": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "黄",
+   "reasons": [
+    "波动率高档",
+    "F&G极端"
+   ]
+  },
+  "SOXX": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "黄",
+   "reasons": [
+    "波动率高档",
+    "F&G极端"
+   ]
+  },
+  "DRAM": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "黄",
+   "reasons": [
+    "波动率高档",
+    "F&G极端"
+   ]
+  },
+  "SNDK": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "黄",
+   "reasons": [
+    "波动率高档",
+    "F&G极端"
+   ]
+  },
+  "MU": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "黄",
+   "reasons": [
+    "波动率高档",
+    "F&G极端"
+   ]
+  },
+  "MRVL": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "黄",
+   "reasons": [
+    "波动率高档",
+    "F&G极端"
+   ]
+  },
+  "NVDA": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "黄",
+   "reasons": [
+    "波动率高档",
+    "F&G极端"
+   ]
+  },
+  "RKLB": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "黄",
+   "reasons": [
+    "波动率高档",
+    "F&G极端"
+   ]
+  },
+  "SPCX": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "黄",
+   "reasons": [
+    "波动率高档",
+    "F&G极端"
+   ]
+  }
+ }
+}
