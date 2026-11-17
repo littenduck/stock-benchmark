@@ -1,0 +1,102 @@
+{
+ "SPY": {
+  "ticker": "SPY",
+  "ok": true,
+  "fg": 24.7,
+  "vol_ratio": 0.46,
+  "score": 0,
+  "confidence": "低",
+  "alert": "绿",
+  "reasons": []
+ },
+ "QQQ": {
+  "ticker": "QQQ",
+  "ok": true,
+  "fg": 24.7,
+  "vol_ratio": 0.42,
+  "score": 0,
+  "confidence": "低",
+  "alert": "绿",
+  "reasons": []
+ },
+ "SOXX": {
+  "ticker": "SOXX",
+  "ok": true,
+  "fg": 24.7,
+  "vol_ratio": 0.38,
+  "score": 0,
+  "confidence": "低",
+  "alert": "绿",
+  "reasons": []
+ },
+ "DRAM": {
+  "ticker": "DRAM",
+  "ok": true,
+  "fg": 24.7,
+  "vol_ratio": 0.57,
+  "score": 0,
+  "confidence": "低",
+  "alert": "绿",
+  "reasons": []
+ },
+ "SNDK": {
+  "ticker": "SNDK",
+  "ok": true,
+  "fg": 24.7,
+  "vol_ratio": 0.61,
+  "score": 0,
+  "confidence": "低",
+  "alert": "绿",
+  "reasons": []
+ },
+ "MU": {
+  "ticker": "MU",
+  "ok": true,
+  "fg": 24.7,
+  "vol_ratio": 0.45,
+  "score": 0,
+  "confidence": "低",
+  "alert": "绿",
+  "reasons": []
+ },
+ "MRVL": {
+  "ticker": "MRVL",
+  "ok": true,
+  "fg": 24.7,
+  "vol_ratio": 0.34,
+  "score": 0,
+  "confidence": "低",
+  "alert": "绿",
+  "reasons": []
+ },
+ "NVDA": {
+  "ticker": "NVDA",
+  "ok": true,
+  "fg": 24.7,
+  "vol_ratio": 0.62,
+  "score": 0,
+  "confidence": "低",
+  "alert": "绿",
+  "reasons": []
+ },
+ "RKLB": {
+  "ticker": "RKLB",
+  "ok": true,
+  "fg": 24.7,
+  "vol_ratio": 0.31,
+  "score": 0,
+  "confidence": "低",
+  "alert": "绿",
+  "reasons": []
+ },
+ "SPCX": {
+  "ticker": "SPCX",
+  "ok": true,
+  "fg": 24.7,
+  "vol_ratio": 0.35,
+  "score": 0,
+  "confidence": "低",
+  "alert": "绿",
+  "reasons": []
+ }
+}

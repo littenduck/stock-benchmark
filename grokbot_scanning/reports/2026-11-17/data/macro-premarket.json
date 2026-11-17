@@ -1,0 +1,99 @@
+{
+ "market": {
+  "vix": 23.12,
+  "vix_chg_pct": 0.92,
+  "vxn": 32.9,
+  "vxn_chg_pct": 11.98,
+  "tnx": 5.14,
+  "tnx_1d_bp": 2.0,
+  "tnx_20d_bp": 2.4,
+  "dxy": 103.69,
+  "dxy_20d_pct": 1.93,
+  "hy_oas": 3.23,
+  "hy_date": "2026-11-13",
+  "hy_4w_bp": -8.0,
+  "fg": {
+   "score": 30.8,
+   "rating": "fear",
+   "ts": "2026-11-17T13:45:42+00:00",
+   "prev_close": 31.0,
+   "week": 37.4,
+   "month": 18.2
+  },
+  "ndx_vs200_pct": -3.03,
+  "spy_vs200_pct": 1.06,
+  "qqq_vs200_pct": -3.03,
+  "soxx_vs_qqq_21d": -7.36,
+  "vxn_minus_vix": 9.78,
+  "vix_band": "偏高",
+  "vxn_band": "偏高",
+  "risk_off_hits": 1,
+  "risk_off": false,
+  "head": 3,
+  "tail": 0,
+  "base_score": -1,
+  "fg_band": "恐惧"
+ },
+ "per_ticker": {
+  "SPY": {
+   "score": -1,
+   "confidence": "中",
+   "alert": "绿",
+   "reasons": []
+  },
+  "QQQ": {
+   "score": -1,
+   "confidence": "中",
+   "alert": "绿",
+   "reasons": []
+  },
+  "SOXX": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "绿",
+   "reasons": []
+  },
+  "DRAM": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "绿",
+   "reasons": []
+  },
+  "SNDK": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "绿",
+   "reasons": []
+  },
+  "MU": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "绿",
+   "reasons": []
+  },
+  "MRVL": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "绿",
+   "reasons": []
+  },
+  "NVDA": {
+   "score": -2,
+   "confidence": "中",
+   "alert": "绿",
+   "reasons": []
+  },
+  "RKLB": {
+   "score": -1,
+   "confidence": "中",
+   "alert": "绿",
+   "reasons": []
+  },
+  "SPCX": {
+   "score": -1,
+   "confidence": "中",
+   "alert": "绿",
+   "reasons": []
+  }
+ }
+}

@@ -1,0 +1,591 @@
+{
+ "SPY": {
+  "ticker": "SPY",
+  "ok": true,
+  "snapshot": "抓取时实时期权链",
+  "spot": 739.95,
+  "near_expiry": "2026-11-17",
+  "monthly_expiry": "2026-11-20",
+  "oi_ok": true,
+  "atm_iv_pct": 23.5,
+  "iv_rank": null,
+  "iv_hist_n": 2,
+  "iv_day_chg_pct": -2.2,
+  "hv20": 23.2,
+  "iv_minus_hv20": 0.3,
+  "skew_95p_105c_volpts": 12.0,
+  "pcr_vol": 1.78,
+  "pcr_oi": 2.95,
+  "call_vol": 101314,
+  "put_vol": 179868,
+  "call_oi": 1065229,
+  "put_oi": 3138926,
+  "top_call_oi": [
+   [
+    800.0,
+    157845
+   ],
+   [
+    810.0,
+    47578
+   ]
+  ],
+  "top_put_oi": [
+   [
+    620.0,
+    166014
+   ],
+   [
+    520.0,
+    152696
+   ]
+  ],
+  "max_pain": 755.0,
+  "sigma1_monthly": [
+   724.2,
+   755.7
+  ],
+  "unusual": [],
+  "earnings_date": null,
+  "score": -1,
+  "confidence": "低",
+  "alert": "绿",
+  "reasons": []
+ },
+ "QQQ": {
+  "ticker": "QQQ",
+  "ok": true,
+  "snapshot": "抓取时实时期权链",
+  "spot": 661.75,
+  "near_expiry": "2026-11-17",
+  "monthly_expiry": "2026-11-20",
+  "oi_ok": true,
+  "atm_iv_pct": 40.1,
+  "iv_rank": null,
+  "iv_hist_n": 2,
+  "iv_day_chg_pct": -0.2,
+  "hv20": 36.5,
+  "iv_minus_hv20": 3.6,
+  "skew_95p_105c_volpts": 5.0,
+  "pcr_vol": 3.15,
+  "pcr_oi": 0.98,
+  "call_vol": 64059,
+  "put_vol": 201980,
+  "call_oi": 1231979,
+  "put_oi": 1211718,
+  "top_call_oi": [
+   [
+    720.0,
+    51233
+   ],
+   [
+    760.0,
+    47568
+   ]
+  ],
+  "top_put_oi": [
+   [
+    680.0,
+    89539
+   ],
+   [
+    600.0,
+    49940
+   ]
+  ],
+  "max_pain": 690.0,
+  "sigma1_monthly": [
+   637.68,
+   685.82
+  ],
+  "unusual": [
+   [
+    "QQQ261120P00760000",
+    6054,
+    1010
+   ],
+   [
+    "QQQ261120P00740000",
+    4952,
+    385
+   ]
+  ],
+  "earnings_date": null,
+  "score": -1,
+  "confidence": "低",
+  "alert": "黄",
+  "reasons": [
+   "异常大单"
+  ]
+ },
+ "SOXX": {
+  "ticker": "SOXX",
+  "ok": true,
+  "snapshot": "抓取时实时期权链",
+  "spot": 141.22,
+  "near_expiry": "2026-11-20",
+  "monthly_expiry": "2026-11-20",
+  "oi_ok": true,
+  "atm_iv_pct": 96.8,
+  "iv_rank": null,
+  "iv_hist_n": 2,
+  "iv_day_chg_pct": 15.5,
+  "hv20": 80.2,
+  "iv_minus_hv20": 16.6,
+  "skew_95p_105c_volpts": 18.3,
+  "pcr_vol": 2.25,
+  "pcr_oi": 1.72,
+  "call_vol": 22946,
+  "put_vol": 51598,
+  "call_oi": 255615,
+  "put_oi": 438396,
+  "top_call_oi": [
+   [
+    155.0,
+    18272
+   ],
+   [
+    166.67,
+    11345
+   ]
+  ],
+  "top_put_oi": [
+   [
+    105.0,
+    94179
+   ],
+   [
+    140.0,
+    22035
+   ]
+  ],
+  "max_pain": 156.67,
+  "sigma1_monthly": [
+   128.83,
+   153.61
+  ],
+  "unusual": [],
+  "earnings_date": null,
+  "score": -1,
+  "confidence": "低",
+  "alert": "黄",
+  "reasons": [
+   "IV+15%"
+  ]
+ },
+ "DRAM": {
+  "ticker": "DRAM",
+  "ok": true,
+  "snapshot": "抓取时实时期权链",
+  "spot": 39.27,
+  "near_expiry": "2026-11-18",
+  "monthly_expiry": "2026-11-20",
+  "oi_ok": true,
+  "atm_iv_pct": 119.6,
+  "iv_rank": null,
+  "iv_hist_n": 2,
+  "iv_day_chg_pct": 15.5,
+  "hv20": 109.1,
+  "iv_minus_hv20": 10.5,
+  "skew_95p_105c_volpts": 8.1,
+  "pcr_vol": 0.77,
+  "pcr_oi": 0.52,
+  "call_vol": 53577,
+  "put_vol": 41519,
+  "call_oi": 407878,
+  "put_oi": 213534,
+  "top_call_oi": [
+   [
+    50.0,
+    25198
+   ],
+   [
+    48.0,
+    12906
+   ]
+  ],
+  "top_put_oi": [
+   [
+    45.0,
+    24208
+   ],
+   [
+    35.0,
+    19864
+   ]
+  ],
+  "max_pain": 45.0,
+  "sigma1_monthly": [
+   35.01,
+   43.53
+  ],
+  "unusual": [],
+  "earnings_date": null,
+  "score": 1,
+  "confidence": "低",
+  "alert": "黄",
+  "reasons": [
+   "IV+15%"
+  ]
+ },
+ "SNDK": {
+  "ticker": "SNDK",
+  "ok": true,
+  "snapshot": "抓取时实时期权链",
+  "spot": 809.11,
+  "near_expiry": "2026-11-20",
+  "monthly_expiry": "2026-11-20",
+  "oi_ok": true,
+  "atm_iv_pct": 134.5,
+  "iv_rank": null,
+  "iv_hist_n": 2,
+  "iv_day_chg_pct": -4.3,
+  "hv20": 135.2,
+  "iv_minus_hv20": -0.7,
+  "skew_95p_105c_volpts": -10.7,
+  "pcr_vol": 1.23,
+  "pcr_oi": 0.64,
+  "call_vol": 17161,
+  "put_vol": 21023,
+  "call_oi": 93796,
+  "put_oi": 60109,
+  "top_call_oi": [
+   [
+    1000.0,
+    4197
+   ],
+   [
+    900.0,
+    1662
+   ]
+  ],
+  "top_put_oi": [
+   [
+    870.0,
+    2435
+   ],
+   [
+    1000.0,
+    2225
+   ]
+  ],
+  "max_pain": 900.0,
+  "sigma1_monthly": [
+   710.42,
+   907.8
+  ],
+  "unusual": [
+   [
+    "SNDK261120P00815000",
+    1109,
+    181
+   ],
+   [
+    "SNDK261120P00825000",
+    849,
+    153
+   ],
+   [
+    "SNDK261120P01690000",
+    35,
+    1
+   ]
+  ],
+  "earnings_date": "2026-10-29",
+  "score": 0,
+  "confidence": "低",
+  "alert": "黄",
+  "reasons": [
+   "异常大单"
+  ]
+ },
+ "MU": {
+  "ticker": "MU",
+  "ok": true,
+  "snapshot": "抓取时实时期权链",
+  "spot": 719.02,
+  "near_expiry": "2026-11-18",
+  "monthly_expiry": "2026-11-20",
+  "oi_ok": true,
+  "atm_iv_pct": 105.2,
+  "iv_rank": null,
+  "iv_hist_n": 2,
+  "iv_day_chg_pct": -3.7,
+  "hv20": 106.4,
+  "iv_minus_hv20": -1.2,
+  "skew_95p_105c_volpts": -10.2,
+  "pcr_vol": 2.63,
+  "pcr_oi": 0.94,
+  "call_vol": 26921,
+  "put_vol": 70932,
+  "call_oi": 301768,
+  "put_oi": 284466,
+  "top_call_oi": [
+   [
+    910.0,
+    7669
+   ],
+   [
+    900.0,
+    7484
+   ]
+  ],
+  "top_put_oi": [
+   [
+    750.0,
+    7278
+   ],
+   [
+    800.0,
+    6482
+   ]
+  ],
+  "max_pain": 820.0,
+  "sigma1_monthly": [
+   650.44,
+   787.6
+  ],
+  "unusual": [
+   [
+    "MU261120P01080000",
+    200,
+    33
+   ],
+   [
+    "MU261120P01330000",
+    30,
+    1
+   ],
+   [
+    "MU261120P01720000",
+    30,
+    5
+   ]
+  ],
+  "earnings_date": "2026-12-23",
+  "score": -1,
+  "confidence": "低",
+  "alert": "黄",
+  "reasons": [
+   "异常大单"
+  ]
+ },
+ "MRVL": {
+  "ticker": "MRVL",
+  "ok": true,
+  "snapshot": "抓取时实时期权链",
+  "spot": 145.36,
+  "near_expiry": "2026-11-20",
+  "monthly_expiry": "2026-11-20",
+  "oi_ok": true,
+  "atm_iv_pct": 121.1,
+  "iv_rank": null,
+  "iv_hist_n": 2,
+  "iv_day_chg_pct": 2.6,
+  "hv20": 124.1,
+  "iv_minus_hv20": -3.0,
+  "skew_95p_105c_volpts": -60.1,
+  "pcr_vol": 1.57,
+  "pcr_oi": 0.63,
+  "call_vol": 5137,
+  "put_vol": 8069,
+  "call_oi": 203810,
+  "put_oi": 128244,
+  "top_call_oi": [
+   [
+    160.0,
+    9305
+   ],
+   [
+    180.0,
+    5646
+   ]
+  ],
+  "top_put_oi": [
+   [
+    175.0,
+    10802
+   ],
+   [
+    160.0,
+    9704
+   ]
+  ],
+  "max_pain": 160.0,
+  "sigma1_monthly": [
+   129.4,
+   161.32
+  ],
+  "unusual": [],
+  "earnings_date": "2026-12-01",
+  "score": 0,
+  "confidence": "低",
+  "alert": "绿",
+  "reasons": []
+ },
+ "NVDA": {
+  "ticker": "NVDA",
+  "ok": true,
+  "snapshot": "抓取时实时期权链",
+  "spot": 156.14,
+  "near_expiry": "2026-11-18",
+  "monthly_expiry": "2026-11-20",
+  "oi_ok": true,
+  "atm_iv_pct": 115.9,
+  "iv_rank": null,
+  "iv_hist_n": 2,
+  "iv_day_chg_pct": 0.2,
+  "hv20": 53.9,
+  "iv_minus_hv20": 62.0,
+  "skew_95p_105c_volpts": -10.5,
+  "pcr_vol": 0.96,
+  "pcr_oi": 0.68,
+  "call_vol": 66295,
+  "put_vol": 63327,
+  "call_oi": 1697285,
+  "put_oi": 1161781,
+  "top_call_oi": [
+   [
+    200.0,
+    64769
+   ],
+   [
+    170.0,
+    56583
+   ]
+  ],
+  "top_put_oi": [
+   [
+    190.0,
+    88864
+   ],
+   [
+    200.0,
+    56267
+   ]
+  ],
+  "max_pain": 175.0,
+  "sigma1_monthly": [
+   139.74,
+   172.54
+  ],
+  "unusual": [],
+  "earnings_date": "2026-11-17",
+  "score": 1,
+  "confidence": "低",
+  "alert": "黄",
+  "reasons": [
+   "财报11-17"
+  ]
+ },
+ "RKLB": {
+  "ticker": "RKLB",
+  "ok": true,
+  "snapshot": "抓取时实时期权链",
+  "spot": 57.37,
+  "near_expiry": "2026-11-20",
+  "monthly_expiry": "2026-11-20",
+  "oi_ok": true,
+  "atm_iv_pct": 130.9,
+  "iv_rank": null,
+  "iv_hist_n": 2,
+  "iv_day_chg_pct": 15.5,
+  "hv20": 107.2,
+  "iv_minus_hv20": 23.7,
+  "skew_95p_105c_volpts": 6.0,
+  "pcr_vol": 0.7,
+  "pcr_oi": 0.87,
+  "call_vol": 16215,
+  "put_vol": 11330,
+  "call_oi": 63667,
+  "put_oi": 55437,
+  "top_call_oi": [
+   [
+    70.0,
+    10296
+   ],
+   [
+    65.0,
+    7427
+   ]
+  ],
+  "top_put_oi": [
+   [
+    45.0,
+    5469
+   ],
+   [
+    55.0,
+    4246
+   ]
+  ],
+  "max_pain": 58.0,
+  "sigma1_monthly": [
+   50.56,
+   64.18
+  ],
+  "unusual": [],
+  "earnings_date": "2026-11-09",
+  "score": 1,
+  "confidence": "低",
+  "alert": "黄",
+  "reasons": [
+   "IV+15%"
+  ]
+ },
+ "SPCX": {
+  "ticker": "SPCX",
+  "ok": true,
+  "snapshot": "抓取时实时期权链",
+  "spot": 137.36,
+  "near_expiry": "2026-11-18",
+  "monthly_expiry": "2026-11-20",
+  "oi_ok": true,
+  "atm_iv_pct": 91.7,
+  "iv_rank": null,
+  "iv_hist_n": 2,
+  "iv_day_chg_pct": 15.5,
+  "hv20": 75.3,
+  "iv_minus_hv20": 16.4,
+  "skew_95p_105c_volpts": 6.3,
+  "pcr_vol": 0.52,
+  "pcr_oi": 0.83,
+  "call_vol": 287389,
+  "put_vol": 150350,
+  "call_oi": 588519,
+  "put_oi": 489896,
+  "top_call_oi": [
+   [
+    160.0,
+    58265
+   ],
+   [
+    155.0,
+    43335
+   ]
+  ],
+  "top_put_oi": [
+   [
+    135.0,
+    40881
+   ],
+   [
+    140.0,
+    38179
+   ]
+  ],
+  "max_pain": 145.0,
+  "sigma1_monthly": [
+   125.94,
+   148.78
+  ],
+  "unusual": [],
+  "earnings_date": "2026-10-20",
+  "score": 1,
+  "confidence": "低",
+  "alert": "黄",
+  "reasons": [
+   "IV+15%"
+  ]
+ }
+}
