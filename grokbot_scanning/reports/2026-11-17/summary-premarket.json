@@ -1,0 +1,1030 @@
+{
+ "date": "2026-11-17",
+ "mode": "premarket",
+ "generated": "2026-11-17 09:02 ET",
+ "market": {
+  "vix": 23.12,
+  "vix_chg_pct": 0.92,
+  "vix_band": "偏高",
+  "vxn": 32.9,
+  "vxn_band": "偏高",
+  "vxn_minus_vix": 9.78,
+  "tnx": 5.14,
+  "tnx_1d_bp": 2.0,
+  "dxy": 103.69,
+  "dxy_20d_pct": 1.93,
+  "hy_oas": 3.23,
+  "hy_date": "2026-11-13",
+  "hy_4w_bp": -8.0,
+  "fg": {
+   "score": 30.8,
+   "rating": "fear",
+   "ts": "2026-11-17T13:45:42+00:00",
+   "prev_close": 31.0,
+   "week": 37.4,
+   "month": 18.2
+  },
+  "fg_band": "恐惧",
+  "ndx_vs200_pct": -3.03,
+  "risk_off": false,
+  "risk_off_hits": 1,
+  "soxx_vs_qqq_21d": -7.36
+ },
+ "ai_reports": {
+  "macro": {
+   "date": "2026-11-16",
+   "age_td": 1,
+   "scores": {
+    "SPY": {
+     "score": -1,
+     "alert": "黄",
+     "confidence": "中"
+    },
+    "QQQ": {
+     "score": -1,
+     "alert": "黄",
+     "confidence": "中"
+    },
+    "SOXX": {
+     "score": -2,
+     "alert": "黄",
+     "confidence": "中"
+    },
+    "DRAM": {
+     "score": -2,
+     "alert": "黄",
+     "confidence": "中"
+    },
+    "SNDK": {
+     "score": -2,
+     "alert": "黄",
+     "confidence": "中"
+    },
+    "MU": {
+     "score": -2,
+     "alert": "黄",
+     "confidence": "中"
+    },
+    "MRVL": {
+     "score": -2,
+     "alert": "黄",
+     "confidence": "中"
+    },
+    "NVDA": {
+     "score": -2,
+     "alert": "黄",
+     "confidence": "中"
+    },
+    "RKLB": {
+     "score": -1,
+     "alert": "黄",
+     "confidence": "低"
+    },
+    "SPCX": {
+     "score": -1,
+     "alert": "黄",
+     "confidence": "低"
+    }
+   }
+  },
+  "fundamental": {
+   "date": "2026-11-16",
+   "age_td": 1,
+   "scores": {
+    "SPY": {
+     "score": 1,
+     "alert": "黄",
+     "confidence": "中"
+    },
+    "QQQ": {
+     "score": 0,
+     "alert": "黄",
+     "confidence": "低"
+    },
+    "SOXX": {
+     "score": 0,
+     "alert": "黄",
+     "confidence": "低"
+    },
+    "DRAM": {
+     "score": 0,
+     "alert": "黄",
+     "confidence": "低"
+    },
+    "SNDK": {
+     "score": -1,
+     "alert": "黄",
+     "confidence": "低"
+    },
+    "MU": {
+     "score": 0,
+     "alert": "黄",
+     "confidence": "中"
+    },
+    "MRVL": {
+     "score": 0,
+     "alert": "黄",
+     "confidence": "中"
+    },
+    "NVDA": {
+     "score": 0,
+     "alert": "红",
+     "confidence": "低"
+    },
+    "RKLB": {
+     "score": -1,
+     "alert": "黄",
+     "confidence": "中"
+    },
+    "SPCX": {
+     "score": 0,
+     "alert": "黄",
+     "confidence": "低"
+    }
+   }
+  },
+  "technical": {
+   "date": "2026-11-16",
+   "age_td": 1,
+   "scores": {
+    "SPY": {
+     "score": -1,
+     "confidence": "中",
+     "alert": "黄"
+    },
+    "QQQ": {
+     "score": -2,
+     "confidence": "中",
+     "alert": "黄"
+    },
+    "SOXX": {
+     "score": -2,
+     "confidence": "中",
+     "alert": "黄"
+    },
+    "DRAM": {
+     "score": -2,
+     "confidence": "中",
+     "alert": "黄"
+    },
+    "SNDK": {
+     "score": -2,
+     "confidence": "中",
+     "alert": "黄"
+    },
+    "MU": {
+     "score": -2,
+     "confidence": "中",
+     "alert": "黄"
+    },
+    "MRVL": {
+     "score": -2,
+     "confidence": "中",
+     "alert": "黄"
+    },
+    "NVDA": {
+     "score": -2,
+     "confidence": "低",
+     "alert": "黄"
+    },
+    "RKLB": {
+     "score": 0,
+     "confidence": "低",
+     "alert": "黄"
+    },
+    "SPCX": {
+     "score": -1,
+     "confidence": "低",
+     "alert": "黄"
+    }
+   }
+  },
+  "options": {
+   "date": "2026-11-16",
+   "age_td": 1,
+   "scores": {
+    "SPY": {
+     "score": 0,
+     "alert": "黄"
+    },
+    "QQQ": {
+     "score": 1,
+     "alert": "黄"
+    },
+    "SOXX": {
+     "score": -1,
+     "alert": "绿"
+    },
+    "DRAM": {
+     "score": 0,
+     "alert": "绿"
+    },
+    "SNDK": {
+     "score": -1,
+     "alert": "黄"
+    },
+    "MU": {
+     "score": 0,
+     "alert": "黄"
+    },
+    "MRVL": {
+     "score": 0,
+     "alert": "绿"
+    },
+    "NVDA": {
+     "score": 0,
+     "alert": "黄"
+    },
+    "RKLB": {
+     "score": 0,
+     "alert": "绿"
+    },
+    "SPCX": {
+     "score": 1,
+     "alert": "绿"
+    }
+   }
+  },
+  "sentiment": {
+   "date": "2026-11-16",
+   "age_td": 1,
+   "scores": {
+    "SPY": {
+     "score": 0,
+     "alert": "绿",
+     "confidence": "中"
+    },
+    "QQQ": {
+     "score": 0,
+     "alert": "绿",
+     "confidence": "中"
+    },
+    "SOXX": {
+     "score": 0,
+     "alert": "绿",
+     "confidence": "中"
+    },
+    "DRAM": {
+     "score": 0,
+     "alert": "绿",
+     "confidence": "低"
+    },
+    "SNDK": {
+     "score": 0,
+     "alert": "绿",
+     "confidence": "中"
+    },
+    "MU": {
+     "score": 0,
+     "alert": "绿",
+     "confidence": "中"
+    },
+    "MRVL": {
+     "score": 0,
+     "alert": "黄",
+     "confidence": "中"
+    },
+    "NVDA": {
+     "score": 0,
+     "alert": "黄",
+     "confidence": "中"
+    },
+    "RKLB": {
+     "score": 0,
+     "alert": "绿",
+     "confidence": "中"
+    },
+    "SPCX": {
+     "score": 0,
+     "alert": "绿",
+     "confidence": "中"
+    }
+   }
+  }
+ },
+ "previous": "2026-11-16 postmarket",
+ "tickers": {
+  "SPY": {
+   "close": 739.95,
+   "price": 739.18,
+   "chg_pct": -1.91,
+   "scores": {
+    "macro": -1,
+    "fundamental": 1,
+    "technical": -1,
+    "options": -1,
+    "sentiment": 0
+   },
+   "src": {
+    "macro": "脚本",
+    "fundamental": "AI11-16",
+    "technical": "脚本",
+    "options": "脚本",
+    "sentiment": "AI11-16"
+   },
+   "stale": [],
+   "total": -0.3,
+   "mid": 0.0,
+   "weights": {
+    "macro": 0.222,
+    "fundamental": 0.278,
+    "technical": 0.278,
+    "options": 0.111,
+    "sentiment": 0.111
+   },
+   "state": "B",
+   "bull": 0,
+   "alert": "黄",
+   "reasons": {
+    "基": [
+     "基AI黄"
+    ],
+    "技": [
+     "扫前日低",
+     "扫前周低"
+    ]
+   },
+   "earnings": null,
+   "support": [
+    734.81,
+    629.28
+   ],
+   "resistance": [
+    741.03,
+    747.88
+   ],
+   "opt_levels": {
+    "max_pain": 755.0,
+    "sigma1": [
+     724.2,
+     755.7
+    ],
+    "call_wall": 800.0,
+    "put_wall": 620.0
+   },
+   "invalidation": {
+    "level": 763.82,
+    "dir": "上破"
+   },
+   "changes": [
+    "无变化"
+   ],
+   "red": [],
+   "red_new": []
+  },
+  "QQQ": {
+   "close": 661.75,
+   "price": 664.23,
+   "chg_pct": -2.67,
+   "scores": {
+    "macro": -1,
+    "fundamental": 0,
+    "technical": -2,
+    "options": -1,
+    "sentiment": 0
+   },
+   "src": {
+    "macro": "脚本",
+    "fundamental": "AI11-16",
+    "technical": "脚本",
+    "options": "脚本",
+    "sentiment": "AI11-16"
+   },
+   "stale": [],
+   "total": -1.0,
+   "mid": -0.5,
+   "weights": {
+    "macro": 0.258,
+    "fundamental": 0.161,
+    "technical": 0.323,
+    "options": 0.129,
+    "sentiment": 0.129
+   },
+   "state": "B",
+   "bull": 0,
+   "alert": "黄",
+   "reasons": {
+    "基": [
+     "基AI黄"
+    ],
+    "技": [
+     "扫前日低",
+     "扫前周低"
+    ],
+    "期": [
+     "异常大单"
+    ]
+   },
+   "earnings": null,
+   "support": [
+    661.14,
+    647.87
+   ],
+   "resistance": [
+    662.02,
+    671.68
+   ],
+   "opt_levels": {
+    "max_pain": 690.0,
+    "sigma1": [
+     637.68,
+     685.82
+    ],
+    "call_wall": 720.0,
+    "put_wall": 680.0
+   },
+   "invalidation": {
+    "level": 716.72,
+    "dir": "上破"
+   },
+   "changes": [
+    "无变化"
+   ],
+   "red": [],
+   "red_new": []
+  },
+  "SOXX": {
+   "close": 141.22,
+   "price": 143.81,
+   "chg_pct": -5.41,
+   "scores": {
+    "macro": -2,
+    "fundamental": 0,
+    "technical": -2,
+    "options": -1,
+    "sentiment": 0
+   },
+   "src": {
+    "macro": "脚本",
+    "fundamental": "AI11-16",
+    "technical": "脚本",
+    "options": "脚本",
+    "sentiment": "AI11-16"
+   },
+   "stale": [],
+   "total": -1.3,
+   "mid": -1.0,
+   "weights": {
+    "macro": 0.258,
+    "fundamental": 0.161,
+    "technical": 0.323,
+    "options": 0.129,
+    "sentiment": 0.129
+   },
+   "state": "B",
+   "bull": 0,
+   "alert": "黄",
+   "reasons": {
+    "基": [
+     "基AI黄"
+    ],
+    "技": [
+     "日内-5.4%",
+     "扫前日低"
+    ],
+    "期": [
+     "IV+15%"
+    ]
+   },
+   "earnings": null,
+   "support": [
+    140.88,
+    137.97
+   ],
+   "resistance": [
+    144.5,
+    154.37
+   ],
+   "opt_levels": {
+    "max_pain": 156.67,
+    "sigma1": [
+     128.83,
+     153.61
+    ],
+    "call_wall": 155.0,
+    "put_wall": 105.0
+   },
+   "invalidation": {
+    "level": 171.26,
+    "dir": "上破"
+   },
+   "changes": [
+    "无变化"
+   ],
+   "red": [],
+   "red_new": []
+  },
+  "DRAM": {
+   "close": 39.27,
+   "price": 39.69,
+   "chg_pct": -7.38,
+   "scores": {
+    "macro": -2,
+    "fundamental": 0,
+    "technical": -2,
+    "options": 1,
+    "sentiment": 0
+   },
+   "src": {
+    "macro": "脚本",
+    "fundamental": "AI11-16",
+    "technical": "脚本",
+    "options": "脚本",
+    "sentiment": "AI11-16"
+   },
+   "stale": [],
+   "total": -0.9,
+   "mid": -1.0,
+   "weights": {
+    "macro": 0.333,
+    "fundamental": 0.208,
+    "technical": 0.208,
+    "options": 0.167,
+    "sentiment": 0.083
+   },
+   "state": "B",
+   "bull": 0,
+   "alert": "黄",
+   "reasons": {
+    "基": [
+     "基AI黄"
+    ],
+    "技": [
+     "日内-7.4%",
+     "扫前日低",
+     "扫前周低"
+    ],
+    "期": [
+     "IV+15%"
+    ]
+   },
+   "earnings": null,
+   "support": [
+    37.01,
+    26.14
+   ],
+   "resistance": [
+    39.36,
+    40.38
+   ],
+   "opt_levels": {
+    "max_pain": 45.0,
+    "sigma1": [
+     35.01,
+     43.53
+    ],
+    "call_wall": 50.0,
+    "put_wall": 45.0
+   },
+   "invalidation": {
+    "level": 52.9,
+    "dir": "上破"
+   },
+   "changes": [
+    "期+0→+1"
+   ],
+   "red": [],
+   "red_new": []
+  },
+  "SNDK": {
+   "close": 809.11,
+   "price": 821.57,
+   "chg_pct": -8.58,
+   "scores": {
+    "macro": -2,
+    "fundamental": -1,
+    "technical": -2,
+    "options": 0,
+    "sentiment": 0
+   },
+   "src": {
+    "macro": "脚本",
+    "fundamental": "AI11-16",
+    "technical": "脚本",
+    "options": "脚本",
+    "sentiment": "AI11-16"
+   },
+   "stale": [],
+   "total": -1.3,
+   "mid": -1.5,
+   "weights": {
+    "macro": 0.258,
+    "fundamental": 0.161,
+    "technical": 0.323,
+    "options": 0.129,
+    "sentiment": 0.129
+   },
+   "state": "B",
+   "bull": 0,
+   "alert": "黄",
+   "reasons": {
+    "基": [
+     "基AI黄"
+    ],
+    "技": [
+     "日内-8.6%",
+     "扫前日低",
+     "扫前周低"
+    ],
+    "期": [
+     "异常大单"
+    ]
+   },
+   "earnings": null,
+   "support": [
+    803.97,
+    685.37
+   ],
+   "resistance": [
+    826.67,
+    939.53
+   ],
+   "opt_levels": {
+    "max_pain": 900.0,
+    "sigma1": [
+     710.42,
+     907.8
+    ],
+    "call_wall": 1000.0,
+    "put_wall": 870.0
+   },
+   "invalidation": {
+    "level": 1422.81,
+    "dir": "上破"
+   },
+   "changes": [
+    "无变化"
+   ],
+   "red": [],
+   "red_new": []
+  },
+  "MU": {
+   "close": 719.02,
+   "price": 733.13,
+   "chg_pct": -7.62,
+   "scores": {
+    "macro": -2,
+    "fundamental": 0,
+    "technical": -2,
+    "options": -1,
+    "sentiment": 0
+   },
+   "src": {
+    "macro": "脚本",
+    "fundamental": "AI11-16",
+    "technical": "脚本",
+    "options": "脚本",
+    "sentiment": "AI11-16"
+   },
+   "stale": [],
+   "total": -1.1,
+   "mid": -1.0,
+   "weights": {
+    "macro": 0.222,
+    "fundamental": 0.278,
+    "technical": 0.278,
+    "options": 0.111,
+    "sentiment": 0.111
+   },
+   "state": "B",
+   "bull": 0,
+   "alert": "黄",
+   "reasons": {
+    "基": [
+     "基AI黄"
+    ],
+    "技": [
+     "穿MA200",
+     "日内-7.6%",
+     "扫前日低"
+    ],
+    "期": [
+     "异常大单"
+    ]
+   },
+   "earnings": null,
+   "support": [
+    689.65,
+    652.56
+   ],
+   "resistance": [
+    737.88,
+    767.13
+   ],
+   "opt_levels": {
+    "max_pain": 820.0,
+    "sigma1": [
+     650.44,
+     787.6
+    ],
+    "call_wall": 910.0,
+    "put_wall": 750.0
+   },
+   "invalidation": {
+    "level": 937.83,
+    "dir": "上破"
+   },
+   "changes": [
+    "期+0→-1"
+   ],
+   "red": [],
+   "red_new": []
+  },
+  "MRVL": {
+   "close": 145.36,
+   "price": 151.5302,
+   "chg_pct": -7.27,
+   "scores": {
+    "macro": -2,
+    "fundamental": 0,
+    "technical": -2,
+    "options": 0,
+    "sentiment": 0
+   },
+   "src": {
+    "macro": "脚本",
+    "fundamental": "AI11-16",
+    "technical": "脚本",
+    "options": "脚本",
+    "sentiment": "AI11-16"
+   },
+   "stale": [],
+   "total": -1.0,
+   "mid": -1.0,
+   "weights": {
+    "macro": 0.222,
+    "fundamental": 0.278,
+    "technical": 0.278,
+    "options": 0.111,
+    "sentiment": 0.111
+   },
+   "state": "B",
+   "bull": 0,
+   "alert": "黄",
+   "reasons": {
+    "基": [
+     "基AI黄"
+    ],
+    "技": [
+     "日内-7.3%",
+     "扫前日低"
+    ],
+    "情": [
+     "情AI黄"
+    ]
+   },
+   "earnings": null,
+   "support": [
+    142.25,
+    132.54
+   ],
+   "resistance": [
+    149.16,
+    162.9
+   ],
+   "opt_levels": {
+    "max_pain": 160.0,
+    "sigma1": [
+     129.4,
+     161.32
+    ],
+    "call_wall": 160.0,
+    "put_wall": 175.0
+   },
+   "invalidation": {
+    "level": 227.64,
+    "dir": "上破"
+   },
+   "changes": [
+    "期+1→+0"
+   ],
+   "red": [],
+   "red_new": []
+  },
+  "NVDA": {
+   "close": 156.14,
+   "price": 157.92,
+   "chg_pct": -4.12,
+   "scores": {
+    "macro": -2,
+    "fundamental": 0,
+    "technical": -2,
+    "options": 1,
+    "sentiment": 0
+   },
+   "src": {
+    "macro": "脚本",
+    "fundamental": "AI11-16",
+    "technical": "脚本",
+    "options": "脚本",
+    "sentiment": "AI11-16"
+   },
+   "stale": [],
+   "total": -0.8,
+   "mid": -1.0,
+   "weights": {
+    "macro": 0.308,
+    "fundamental": 0.192,
+    "technical": 0.192,
+    "options": 0.154,
+    "sentiment": 0.154
+   },
+   "state": "B",
+   "bull": 0,
+   "alert": "红",
+   "reasons": {
+    "基": [
+     "基AI红"
+    ],
+    "技": [
+     "扫前日低"
+    ],
+    "期": [
+     "财报11-17"
+    ],
+    "情": [
+     "情AI黄"
+    ]
+   },
+   "earnings": "2026-11-17",
+   "support": [
+    153.71,
+    148.8
+   ],
+   "resistance": [
+    158.39,
+    170.0
+   ],
+   "opt_levels": {
+    "max_pain": 175.0,
+    "sigma1": [
+     139.74,
+     172.54
+    ],
+    "call_wall": 200.0,
+    "put_wall": 190.0
+   },
+   "invalidation": {
+    "level": 213.16,
+    "dir": "上破"
+   },
+   "changes": [
+    "期+0→+1"
+   ],
+   "red": [
+    "基本面AI报告红"
+   ],
+   "red_new": []
+  },
+  "RKLB": {
+   "close": 57.37,
+   "price": 57.12,
+   "chg_pct": -6.76,
+   "scores": {
+    "macro": -1,
+    "fundamental": -1,
+    "technical": 0,
+    "options": 1,
+    "sentiment": 0
+   },
+   "src": {
+    "macro": "脚本",
+    "fundamental": "AI11-16",
+    "technical": "脚本",
+    "options": "脚本",
+    "sentiment": "AI11-16"
+   },
+   "stale": [],
+   "total": -0.5,
+   "mid": -1.0,
+   "weights": {
+    "macro": 0.258,
+    "fundamental": 0.323,
+    "technical": 0.161,
+    "options": 0.129,
+    "sentiment": 0.129
+   },
+   "state": "B",
+   "bull": 2,
+   "alert": "黄",
+   "reasons": {
+    "基": [
+     "基AI黄"
+    ],
+    "技": [
+     "日内-6.8%",
+     "扫前日低"
+    ],
+    "期": [
+     "IV+15%"
+    ]
+   },
+   "earnings": null,
+   "support": [
+    56.08,
+    53.01
+   ],
+   "resistance": [
+    58.2,
+    59.76
+   ],
+   "opt_levels": {
+    "max_pain": 58.0,
+    "sigma1": [
+     50.56,
+     64.18
+    ],
+    "call_wall": 70.0,
+    "put_wall": 45.0
+   },
+   "invalidation": {
+    "level": null,
+    "dir": null
+   },
+   "changes": [
+    "无变化"
+   ],
+   "red": [],
+   "red_new": []
+  },
+  "SPCX": {
+   "close": 137.36,
+   "price": 138.64,
+   "chg_pct": -1.26,
+   "scores": {
+    "macro": -1,
+    "fundamental": 0,
+    "technical": -1,
+    "options": 1,
+    "sentiment": 0
+   },
+   "src": {
+    "macro": "脚本",
+    "fundamental": "AI11-16",
+    "technical": "脚本",
+    "options": "脚本",
+    "sentiment": "AI11-16"
+   },
+   "stale": [],
+   "total": -0.3,
+   "mid": -0.5,
+   "weights": {
+    "macro": 0.308,
+    "fundamental": 0.192,
+    "technical": 0.192,
+    "options": 0.154,
+    "sentiment": 0.154
+   },
+   "state": "B",
+   "bull": 1,
+   "alert": "黄",
+   "reasons": {
+    "基": [
+     "基AI黄"
+    ],
+    "技": [
+     "扫前日低",
+     "扫前周低"
+    ],
+    "期": [
+     "IV+15%"
+    ]
+   },
+   "earnings": null,
+   "support": [
+    136.64,
+    130.39
+   ],
+   "resistance": [
+    140.66,
+    143.21
+   ],
+   "opt_levels": {
+    "max_pain": 145.0,
+    "sigma1": [
+     125.94,
+     148.78
+    ],
+    "call_wall": 160.0,
+    "put_wall": 135.0
+   },
+   "invalidation": {
+    "level": 148.69,
+    "dir": "上破"
+   },
+   "changes": [
+    "无变化"
+   ],
+   "red": [],
+   "red_new": []
+  }
+ },
+ "gaps": [],
+ "leverage_map": {
+  "SPY": "SPXL",
+  "QQQ": "TQQQ",
+  "SOXX": "SOXL",
+  "DRAM": "RAM"
+ },
+ "runtime_s": 1.4
+}
